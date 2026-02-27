@@ -30,4 +30,4 @@ output_file = "segmented-audio/output.wav"
 start_time = hhmmss_to_ms("00:00:00")  # Start at 0 seconds
 end_time = hhmmss_to_ms("00:00:24")  # End at 24 seconds
 
-cut_audio(input_file, start_time, end_time)
+cut_audio(input_file, output_file, start_time, end_time)
