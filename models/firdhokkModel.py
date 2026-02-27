@@ -55,9 +55,8 @@ def predict_emotions_all(audio_path, model, feature_extractor, id2label, max_dur
     with torch.no_grad():
         outputs = model(**inputs)
 
-    logits = outputs.logits.squeeze(0)  # [num_labels]
+    logits = outputs.logits.squeeze(0) 
 
-    # Most SER models are single-label => softmax
     probs = torch.softmax(logits, dim=-1)
 
     results = {id2label[i]: float(probs[i].cpu()) for i in range(probs.shape[0])}
