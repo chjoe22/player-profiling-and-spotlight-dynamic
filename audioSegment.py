@@ -25,9 +25,9 @@ def hhmmss_to_ms(timestamp: str) -> int:
     return (t.hour * 3600 + t.minute * 60 + t.second) * 1000
 
 # Examples
-input_file = "audio/episode1.wav"
+input_file = "audio/episode0.wav"
 output_file = "segmented-audio/output.wav"
-start_time = hhmmss_to_ms("00:31:59")  # Start at 0 seconds
-end_time = hhmmss_to_ms("00:32:00")  # End at 24 seconds
+start_time = hhmmss_to_ms("00:26:33")  # Start at 0 seconds
+end_time = hhmmss_to_ms("00:26:35")  # End at 24 seconds
 
 cut_audio(input_file, output_file, start_time, end_time)
