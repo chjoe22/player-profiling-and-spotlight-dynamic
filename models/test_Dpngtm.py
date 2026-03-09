@@ -17,6 +17,6 @@ def predict_emotion(audio_path: str):
 
     return model.config.id2label[pred_id], probs
 
-emotion, probs = predict_emotion("../segmented-audio/output.wav")
-print("Predicted emotion:", emotion)
-print({model.config.id2label[i]: float(probs[i]) for i in range(probs.numel())})
+#emotion, probs = predict_emotion("../segmented-audio/output.wav")
+#print("Predicted emotion:", emotion)
+#print({model.config.id2label[i]: float(probs[i]) for i in range(probs.numel())})

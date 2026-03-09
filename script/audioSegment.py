@@ -24,3 +24,10 @@ def hhmmss_to_ms(timestamp: str) -> int:
     t = datetime.strptime(timestamp, "%H:%M:%S")
     return (t.hour * 3600 + t.minute * 60 + t.second) * 1000
 
+# Examples
+input_file = "../audio/episode1.wav"
+output_file = "../segmented-audio/output1.wav"
+start_time = hhmmss_to_ms("00:26:33")  # Uses the format from the transcripts
+end_time = hhmmss_to_ms("00:26:35")  # Uses the format from the transcripts
+
+cut_audio(input_file, output_file, start_time, end_time)
