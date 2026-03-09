@@ -3,3 +3,5 @@ transformers
 librosa
 torch
 soundfile
+opencv-python
+insightface
