@@ -1,75 +1,30 @@
-# Requires: librosa
-from transformers import AutoModelForAudioClassification, AutoFeatureExtractor
-import librosa
 import torch
 import numpy as np
+from transformers import AutoFeatureExtractor, AutoModelForAudioClassification
 
-model_id = "firdhokk/speech-emotion-recognition-with-openai-whisper-large-v3"
-model = AutoModelForAudioClassification.from_pretrained(model_id)
+MODEL_ID = "firdhokk/speech-emotion-recognition-with-openai-whisper-large-v3"
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-feature_extractor = AutoFeatureExtractor.from_pretrained(model_id, do_normalize=True)
+extractor = AutoFeatureExtractor.from_pretrained(MODEL_ID, do_normalize=True)
+model = AutoModelForAudioClassification.from_pretrained(MODEL_ID).to(device).eval()
 id2label = model.config.id2label
 
-
-def preprocess_audio(audio_path, feature_extractor, max_duration=30.0):
-    audio_array, sampling_rate = librosa.load(audio_path, sr=16000, mono=True)
-
-    max_length = int(feature_extractor.sampling_rate * max_duration)
+def predict_emotion(audio_array, sr=16000):
+    max_length = int(extractor.sampling_rate * 30.0)
+    
     if len(audio_array) > max_length:
         audio_array = audio_array[:max_length]
     else:
         audio_array = np.pad(audio_array, (0, max_length - len(audio_array)))
 
-    inputs = feature_extractor(
-        audio_array,
-        sampling_rate=feature_extractor.sampling_rate,
-        max_length=max_length,
-        truncation=True,
-        return_tensors="pt",
-    )
-    return inputs
-
-def predict_emotion(audio_path, model, feature_extractor, id2label, max_duration=30.0):
-    inputs = preprocess_audio(audio_path, feature_extractor, max_duration)
-
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    model = model.to(device)
-    inputs = {key: value.to(device) for key, value in inputs.items()}
+    inputs = extractor(audio_array, sampling_rate=sr, return_tensors="pt").to(device)
 
     with torch.no_grad():
-        outputs = model(**inputs)
+        logits = model(**inputs).logits
+        probs = torch.softmax(logits, dim=-1).squeeze(0)
 
-    logits = outputs.logits
-    predicted_id = torch.argmax(logits, dim=-1).item()
-    predicted_label = id2label[predicted_id]
+    scores = {id2label[i]: float(probs[i]) for i in range(len(probs))}
+    
+    emotion = id2label[torch.argmax(probs).item()]
 
-    return predicted_label
-
-def predict_emotions_all(audio_path, model, feature_extractor, id2label, max_duration=30.0):
-    inputs = preprocess_audio(audio_path, feature_extractor, max_duration)
-
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    model = model.to(device)
-    inputs = {k: v.to(device) for k, v in inputs.items()}
-
-    with torch.no_grad():
-        outputs = model(**inputs)
-
-    logits = outputs.logits.squeeze(0) 
-
-    probs = torch.softmax(logits, dim=-1)
-
-    results = {id2label[i]: float(probs[i].cpu()) for i in range(probs.shape[0])}
-
-    # Sort high -> low
-    results = dict(sorted(results.items(), key=lambda x: x[1], reverse=True))
-    return results
-
-audio_path = "../segmented-audio/output.wav"
-
-predicted_emotion = predict_emotion(audio_path, model, feature_extractor, id2label)
-print(f"Predicted Emotion: {predicted_emotion}")
-
-predicted_emotion_values = predict_emotions_all(audio_path, model, feature_extractor, id2label)
-for label, p in predicted_emotion_values.items():
-    print(f"{label:>12}: {p:.4f}")
+    return emotion, scores

@@ -7,7 +7,8 @@ import csv
 import numpy as np
 from datetime import datetime
 from pydub import AudioSegment
-from models.dpngtmModel import predict_emotion
+#from models.dpngtmModel import predict_emotion
+from models.firdhokkModel import predict_emotion
 
 
 transcripts_path = "../transcripts/0_transcript.csv"
@@ -64,7 +65,8 @@ with open(transcripts_path, encoding="utf-8") as file, \
         if max_peak > 0:
             samples /= max_peak
         else:
-            samples /= 32768.0
+            overlap_writer.writerow([speaker, start_time, end_time, "Silence"])
+            continue
 
         emotion, scores = predict_emotion(samples)
         writer.writerow([speaker, start_time, end_time, emotion, scores])
