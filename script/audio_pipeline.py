@@ -7,8 +7,11 @@ import csv
 import numpy as np
 from datetime import datetime
 from pydub import AudioSegment
+
+# Model switching - change which ones are commented out to test other models
 #from models.dpngtmModel import predict_emotion
-from models.firdhokkModel import predict_emotion
+#from models.firdhokkModel import predict_emotion
+from models.prithivMLmodsModel import predict_emotion
 
 
 transcripts_path = "../transcripts/0_transcript.csv"
