@@ -13,30 +13,43 @@ from models.dpngtmModel import predict_emotion
 transcripts_path = "../transcripts/0_transcript.csv"
 audio_path = "../audio/episode0.wav"
 results_path = "../emotion_results.csv"
+overlap_path = "../overlap_segments.csv"
 audio = AudioSegment.from_file(audio_path)
-audio = audio.set_frame_rate(16000)
+audio = audio.set_frame_rate(16000).set_channels(1)
 
 def hhmmss_to_ms(timestamp: str) -> int:
     t = datetime.strptime(timestamp, "%H:%M:%S")
     return (t.hour * 3600 + t.minute * 60 + t.second) * 1000
 
-
+previous_time_ms = 0
 with open(transcripts_path, encoding="utf-8") as file, \
-    open(results_path, "w", newline="", encoding="utf-8") as output:
+    open(results_path, "w", newline="", encoding="utf-8") as output, \
+    open(overlap_path, "w", newline="", encoding="utf-8") as overlap:
 
     reader = list(csv.reader(file))[1:] # will ignore the header
     writer = csv.writer(output)
+    overlap_writer = csv.writer(overlap)
     writer.writerow(["speaker", "start_time", "end_time", "emotion", "scores"])
+    overlap_writer.writerow(["speaker", "start_time", "end_time", "reason"])
 
     for speaker, start_time, end_time, text in reader:
-        start_ms = hhmmss_to_ms(start_time)
-
+        
         # Checks if end_time is null or none and continue if it doesnt exists
         if not end_time.strip():
+            overlap_writer.writerow([speaker, start_time, end_time, "missing_end_time"])
             continue
 
+        start_ms = hhmmss_to_ms(start_time)
         end_ms = hhmmss_to_ms(end_time)
-        
+
+        if end_ms <= start_ms:
+            overlap_writer.writerow([speaker, start_time, end_time, "invalid_range"])
+            continue
+
+        if start_ms < previous_time_ms:
+            overlap_writer.writerow([speaker, start_time, end_time, "overlap_with_previous"])
+            continue
+
         #print(speaker, f"{start_time} : {start_ms} | {end_time} : {end_ms}")
         
         audio_clip = audio[start_ms:end_ms]
@@ -44,12 +57,17 @@ with open(transcripts_path, encoding="utf-8") as file, \
             continue
 
         samples = np.array(audio_clip.get_array_of_samples()).astype("float32")
+        max_peak = np.max(np.abs(samples))
         if samples.size == 0:
             continue
-        samples /= 32768.0
+
+        if max_peak > 0:
+            samples /= max_peak
+        else:
+            samples /= 32768.0
 
         emotion, scores = predict_emotion(samples)
         writer.writerow([speaker, start_time, end_time, emotion, scores])
-        
+        previous_time_ms = end_ms
 
 
