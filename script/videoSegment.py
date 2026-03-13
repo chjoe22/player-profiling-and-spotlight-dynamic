@@ -30,7 +30,7 @@ def split_video(input_video, output_folder, segment_time=600):
 
 if __name__ == "__main__":
     split_video(
-        input_video="../video/episode1.mp4",
+        input_video="../video/episode100.mp4",
         output_folder="../segmented-video/",
         segment_time=600  # 600 seconds = 10 minutes
     )
