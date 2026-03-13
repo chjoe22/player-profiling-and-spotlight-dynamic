@@ -26,7 +26,7 @@ def hhmmss_to_ms(timestamp: str) -> int:
 
 # Examples
 input_file = "../audio/episode1.wav"
-output_file = "../segmented-audio/output1.wav"
+output_file = "../audio/output1.wav"
 start_time = hhmmss_to_ms("00:26:33")  # Uses the format from the transcripts
 end_time = hhmmss_to_ms("00:26:35")  # Uses the format from the transcripts
 
