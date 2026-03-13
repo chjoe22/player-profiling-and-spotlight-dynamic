@@ -5,3 +5,5 @@ torch
 soundfile
 opencv-python
 insightface
+funasr
+torchaudio
