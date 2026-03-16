@@ -18,7 +18,7 @@ from models.emotionWav2vec import predict_emotion
 
 episode_number = "episode100"
 transcripts_path = "../../transcripts/0_transcript.csv"
-audio_path = "../../audio/episode0.wav"
+audio_path = f"../../audio/{episode_number}.wav"
 results_dir = "../../results/audio"
 overlap_dir = "../../results/overlap"
 audio = AudioSegment.from_file(audio_path)
