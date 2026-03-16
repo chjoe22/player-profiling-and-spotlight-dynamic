@@ -50,7 +50,7 @@ The audio file is most likely *.mp3* and we would like the file to be *.wav* as 
 
 Also, change the `episode_number` inside `audio_pipeline.py` to reflect the chosen episode, and also the transcript name.
 
-Ones the audio file and the corresponding transcript file are in the correct folders, simply run the following command inside the `~/script/pipeline` 
+Once the audio file and the corresponding transcript file are in the correct folders, simply run the following command inside the `~/script/pipeline` 
 
 ```bash
 python3 audio_pipeline.py
