@@ -8,3 +8,6 @@ insightface
 funasr
 torchaudio
 onnxruntime-gpu
+tqdm
+Pillow
+torchvision
