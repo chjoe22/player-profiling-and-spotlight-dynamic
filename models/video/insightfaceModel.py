@@ -2,9 +2,6 @@ import numpy as np
 import cv2
 
 def identify_face(face_embedding, gallery, threshold=0.6):
-    """
-    Compares a new face from a video frame to your pre-saved gallery.
-    """
     best_match = "Unknown"
     highest_score = -1
 
