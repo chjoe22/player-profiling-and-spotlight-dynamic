@@ -11,10 +11,10 @@ from pydub import AudioSegment
 from tqdm import tqdm
 
 # Model switching - change which ones are commented out to test other models
-# from models.dpngtmModel import predict_emotion
-from models.audio.firdhokkModel import predict_emotion
-# from models.audio.prithivMLmodsModel import predict_emotion
-# from models.emotionWav2vec import predict_emotion
+# from models.audio.dpngtm_model import predict_emotion
+from models.audio.firdhokk_model import predict_emotion
+# from models.audio.prithivMLmods_model import predict_emotion
+# from models.audio.emotionWav2vec_model import predict_emotion
 
 
 episode_number = "episode100"

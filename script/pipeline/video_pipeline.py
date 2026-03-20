@@ -14,9 +14,9 @@ import warnings
 import datetime
 
 from insightface.app import FaceAnalysis
-from models.video.insightfaceModel import identify_face, identify_all_faces
-#from models.video.dima806Model import predict_video_emotion
-from models.video.BEiTModel import predict_video_emotion
+from models.video.insightface_model import identify_face, identify_all_faces
+#from models.video.dima806_model import predict_video_emotion
+from models.video.BEiT_model import predict_video_emotion
 
 # Warnings ignores to make sure that the process bar and area is free and is easily readable - unnecessary
 warnings.filterwarnings("ignore", category=FutureWarning)
