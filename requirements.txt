@@ -11,3 +11,4 @@ onnxruntime-gpu
 tqdm
 Pillow
 torchvision
+pandas
