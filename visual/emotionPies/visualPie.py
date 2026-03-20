@@ -3,28 +3,28 @@ import re
 import pandas as pd
 import matplotlib.pyplot as plt
 
-INPUT_CSV = "../emotion_results.csv"
-OUTPUT_DIR = "../visual/emotion_pies"
+# paths
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+PROJECT_ROOT = os.path.abspath(os.path.join(SCRIPT_DIR, "..", ".."))
 
-# Utility functions
+INPUT_CSV = os.path.join(PROJECT_ROOT, "results", "video", "episode100_results.csv")
+OUTPUT_DIR = os.path.join(SCRIPT_DIR, "generated")
+
+# functions
 def clean_filename(name):
     name = str(name).strip()
     name = re.sub(r'[\\/*?:"<>|]', "", name)
     return name.replace(" ", "_")
 
-# Check if more than one speaker, gets removed if more for now 
-# (ALL is also funky, so remove when generating)
 def is_single_speaker(speaker):
     if pd.isna(speaker):
         return False
     speaker = str(speaker).strip()
     return not any(x in speaker for x in [",", "&", "/"])
 
-# Check if dir is there or create one
 def make_folder(path):
     os.makedirs(path, exist_ok=True)
 
-# Plotter
 def plot_pie(speaker, emotion_counts, output_dir):
     if emotion_counts.empty:
         return
@@ -55,29 +55,55 @@ def plot_pie(speaker, emotion_counts, output_dir):
         legend_labels,
         title="Emotions",
         loc="center left",
-        bbox_to_anchor=(1.25, 0.5),
+        bbox_to_anchor=(1.05, 0.5),
         frameon=False,
         fontsize=10,
         title_fontsize=11
     )
 
-    plt.subplots_adjust(right=0.72)
+    plt.subplots_adjust(right=0.78)
 
     filename = clean_filename(speaker)
     save_path = os.path.join(output_dir, f"{filename}_emotion_pie.png")
     plt.savefig(save_path, dpi=300, bbox_inches="tight")
     plt.close()
 
+    print(f"Saved: {save_path}")
+
 if __name__ == "__main__":
     plt.style.use("ggplot")
 
+    print("Script dir:", SCRIPT_DIR)
+    print("Project root:", PROJECT_ROOT)
+    print("Looking for CSV at:", INPUT_CSV)
+    print("CSV exists:", os.path.exists(INPUT_CSV))
+    print("Saving output to:", OUTPUT_DIR)
+
+    if not os.path.exists(INPUT_CSV):
+        raise FileNotFoundError(f"CSV not found: {INPUT_CSV}")
+
     data = pd.read_csv(INPUT_CSV)
+
+    print("Columns found:", list(data.columns))
+    print("Number of rows before cleaning:", len(data))
+
+    required_cols = {"speaker", "emotion"}
+    missing = required_cols - set(data.columns)
+    if missing:
+        raise ValueError(f"Missing required columns: {missing}")
+
     data = data.dropna(subset=["speaker", "emotion"]).copy()
 
     data["speaker"] = data["speaker"].astype(str).str.strip()
     data["emotion"] = data["emotion"].astype(str).str.strip()
 
     data = data[data["speaker"].apply(is_single_speaker)]
+
+    print("Number of rows after cleaning/filtering:", len(data))
+    print("Unique speakers after filtering:", data["speaker"].nunique())
+
+    if data.empty:
+        raise ValueError("No rows left after filtering. Check speaker/emotion values.")
 
     make_folder(OUTPUT_DIR)
 
