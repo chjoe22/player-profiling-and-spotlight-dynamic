@@ -1,3 +1,8 @@
+import sys
+from pathlib import Path
+# To find the path in the root folder - too many .parent but they are necessary for it to work
+sys.path.append(str(Path(__file__).resolve().parent.parent.parent))
+
 import subprocess
 import os
 

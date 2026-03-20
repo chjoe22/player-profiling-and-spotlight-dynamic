@@ -8,12 +8,13 @@ import os
 import numpy as np
 from datetime import datetime
 from pydub import AudioSegment
+from tqdm import tqdm
 
 # Model switching - change which ones are commented out to test other models
 # from models.dpngtmModel import predict_emotion
-# from models.firdhokkModel import predict_emotion
-# from models.prithivMLmodsModel import predict_emotion
-from models.emotionWav2vec import predict_emotion
+from models.audio.firdhokkModel import predict_emotion
+# from models.audio.prithivMLmodsModel import predict_emotion
+# from models.emotionWav2vec import predict_emotion
 
 
 episode_number = "episode100"
@@ -41,10 +42,10 @@ with open(transcripts_path, encoding="utf-8") as file, \
     reader = list(csv.reader(file))[1:] # will ignore the header
     writer = csv.writer(output)
     overlap_writer = csv.writer(overlap)
-    writer.writerow(["speaker", "start_time", "end_time", "emotion", "scores"])
+    writer.writerow(["speaker", "start_time", "end_time", "emotion", "scores", "text"])
     overlap_writer.writerow(["speaker", "start_time", "end_time", "reason"])
 
-    for speaker, start_time, end_time, text in reader:
+    for speaker, start_time, end_time, text in tqdm(reader, desc=f"Processing {episode_number}", unit="segment"):
 
         # Checks if end_time is null or none and continue if it doesnt exists
         if not end_time.strip():
@@ -80,7 +81,7 @@ with open(transcripts_path, encoding="utf-8") as file, \
             continue
 
         emotion, scores = predict_emotion(samples)
-        writer.writerow([speaker, start_time, end_time, emotion, scores])
+        writer.writerow([speaker, start_time, end_time, emotion, scores, text])
         previous_time_ms = end_ms
 
 
