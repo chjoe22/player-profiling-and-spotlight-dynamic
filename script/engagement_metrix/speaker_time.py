@@ -58,10 +58,30 @@ def time(csv_path: str):
     return stats
 
 
+def compare(csv_path):
+    df = pd.read_csv(csv_path)
+
+def find_combat(csv_path):
+    df = pd.read_csv(csv_path)
+    df.columns = [c.strip().lower() for c in df.columns]
+
+    mask = (
+            df["text"].str.contains("roll", case=False, na=False) &
+            df["text"].str.contains("initiative", case=False, na=False)
+    )
+    matches = df[mask]
+
+    print(f"\n{csv_path} — {len(matches)} match(es)")
+    for _, row in matches.iterrows():
+        print(f"  [{row['start_time']}] {row['speaker']}: {row['text'][:120]}")
+
+
 if __name__ == "__main__":
     import glob
 
     folder = "../../transcripts"
+    folder_stats = "../../transcripts_stats"
+
     csv_files = glob.glob(f"{folder}/*.csv")
 
     if not csv_files:
@@ -70,5 +90,12 @@ if __name__ == "__main__":
         for path in sorted(csv_files):
             print(f"Processing {path}...")
             time(path)
+            print(f"Finding combat {path}")
+            find_combat(path)
+    csv_stats = glob.glob(f"{folder_stats}/*.csv")
+
+
+    #for path in csv_stats:
+        #compare(path)
 
 
