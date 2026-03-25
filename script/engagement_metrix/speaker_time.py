@@ -59,21 +59,10 @@ def time(csv_path: str):
 
 
 def compare(csv_path):
-    df = pd.read_csv(csv_path)
+    df1 = pd.read_csv(csv_path)
+    path2 = csv_path.replace(".csv", "_stats.csv")
+    df2 = pd.read_csv(csv_path)
 
-def find_combat(csv_path):
-    df = pd.read_csv(csv_path)
-    df.columns = [c.strip().lower() for c in df.columns]
-
-    mask = (
-            df["text"].str.contains("roll", case=False, na=False) &
-            df["text"].str.contains("initiative", case=False, na=False)
-    )
-    matches = df[mask]
-
-    print(f"\n{csv_path} — {len(matches)} match(es)")
-    for _, row in matches.iterrows():
-        print(f"  [{row['start_time']}] {row['speaker']}: {row['text'][:120]}")
 
 
 if __name__ == "__main__":
