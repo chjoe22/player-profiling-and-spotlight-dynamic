@@ -70,10 +70,10 @@ def find_skill(csv_path, window):
             rows.append({
                 "skill": skill,
                 "speaker": row["speaker"],
-                "time": row["start_time"],
+                "start_time": row["start_time"],
                 "roll_result": roll_result,
                 "roll_speaker": roll_speaker,
-                "roll_time": roll_time,
+                "roll_start_time": roll_time,
             })
     return pd.DataFrame(rows)
 

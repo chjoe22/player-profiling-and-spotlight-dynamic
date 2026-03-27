@@ -29,8 +29,9 @@ SKILL_SCENARIOS = {
 }
 
 class profile():
-    def __init__(self, name: str):
+    def __init__(self, name: str, episode: int):
         self.name = name
+        self.episode = episode
         self.scores = {scenario: 0 for scenario in SCENARIOS}
 
     def update(self, skill: str, positive: bool):
@@ -42,4 +43,5 @@ class profile():
     def top_scenarios(self):
         return sorted(self.scores.items(), key=lambda x: x[1], reverse=True)
 
-    
+    def to_dict(self):
+        return {"player": self.name, "episode": self.episode, **self.scores}
