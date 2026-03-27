@@ -29,10 +29,16 @@ def generate_profile(emotion_path: str, context_path: str, episode: int) -> list
             profiles[speaker] = profile(name=speaker, episode=episode)
 
         emotion = emotions[row["emotion"]]
+        if emotion in POSITIVE_EMOTIONS:
+            profiles[speaker].update(row["skill"], positive=True)
+        elif emotion in NEGATIVE_EMOTIONS:
+            profiles[speaker].update(row["skill"], positive=False)
+
+    for emotion, row in emotions.iterrows():
+        speaker = row["speaker"]
         profiles[speaker].update_emotion(emotion)
 
-        
-
+    return list(profiles.values())
 
 
 def save_profiles(profiles: list[profile], output_path: str):
@@ -42,9 +48,30 @@ def save_profiles(profiles: list[profile], output_path: str):
     print(f"Saved {output_path}")
 
 if __name__ == "__main__":
-    emotion_folder = "../../resources/transcripts_results"
+    emotion_folder = "../../resources/results/video"
     context_folder = "../../resources/transcripts_context"
     output_folder = "../../resources/profiles"
     os.makedirs(output_folder, exist_ok=True)
+
+    emotion_files = {
+        os.path.basename(p).replace("_results.csv", ""): p
+        for p in glob.glob(f"{emotion_folder}/*_results.csv")
+    }
+    context_files = {
+        os.path.basename(p).replace("_context.csv", ""): p
+        for p in glob.glob(f"{context_folder}/*_context.csv")
+    }
+
+    episodes = sorted(set(emotion_files) & set(context_files))
+
+    for episode in episodes:
+        print(f"Processing {episode}...")
+        profiles = generate_profile(
+            emotion_path=emotion_files[episode],
+            context_path=context_files[episode],
+            episode=episode,
+        )
+        output_path = os.path.join(output_folder, f"{episode}_profiles.csv")
+        save_profiles(profiles=profiles, output_path=output_path)
 
     generate_profile(emotion_folder, context_folder, "100")
