@@ -20,8 +20,8 @@ number = '100'
 episode_number = f"episode{number}"
 transcripts_path = f"../../resources/transcripts/{number}_transcript.csv"
 audio_path = f"../../audio/{episode_number}.wav"
-results_dir = "../../results/audio"
-overlap_dir = "../../results/overlap"
+results_dir = "../../resources/results/audio"
+overlap_dir = "../../resources/results/overlap"
 audio = AudioSegment.from_file(audio_path)
 audio = audio.set_frame_rate(16000).set_channels(1)
 

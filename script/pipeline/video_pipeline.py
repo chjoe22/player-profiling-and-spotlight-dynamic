@@ -31,7 +31,7 @@ app.prepare(ctx_id=0, det_size=(640, 640))
 # frames_root = "../frames/episode1/"
 episode_number = "episode100" # Change number to reflect the episode running
 video_segment_path = "../../segmented-video"
-results_dir = "../../results/video"
+results_dir = "../../resources/results/video"
 data = np.load("../helper/cast_embeddings.npz")
 gallery = {name: data[name] for name in data.files}
 
