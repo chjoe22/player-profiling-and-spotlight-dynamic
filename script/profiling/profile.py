@@ -28,17 +28,31 @@ SKILL_SCENARIOS = {
     "medicine":        ["medicine"],
 }
 
+EMOTION_LIST = [
+    "surprise",
+    "fear",
+    "disgust",
+    "happy",
+    "sad",
+    "angry",
+    "neutral",
+]
+
 class profile():
     def __init__(self, name: str, episode: int):
         self.name = name
         self.episode = episode
         self.scores = {scenario: 0 for scenario in SCENARIOS}
+        self.emotions = {emotion: 0 for emotion in EMOTION_LIST}
 
-    def update(self, skill: str, positive: bool):
+    def update_scenario(self, skill: str, positive: bool):
         scenarios = SKILL_SCENARIOS.get(skill.lower(), [])
         change = +1 if positive else -1
         for scenario in scenarios:
             self.scores[scenario] += change
+
+    def update_emotion(self, emotion: str):
+        self.emotions[emotion] += 1
 
     def top_scenarios(self):
         return sorted(self.scores.items(), key=lambda x: x[1], reverse=True)

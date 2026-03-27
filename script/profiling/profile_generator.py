@@ -16,7 +16,7 @@ def load_context(csv_path: str) -> pd.DataFrame:
     df = [c.strip().lower() for c in df.columns]
     return df[["skill", "speaker", "start_time", "roll_start_time"]]
 
-def generate_profile(emotion_path: str, context_path: str, episode: str) -> list[profile]:
+def generate_profile(emotion_path: str, context_path: str, episode: int) -> list[profile]:
     emotions = load_emotions(emotion_path)
     context = load_context(context_path)
 
@@ -29,6 +29,11 @@ def generate_profile(emotion_path: str, context_path: str, episode: str) -> list
             profiles[speaker] = profile(name=speaker, episode=episode)
 
         emotion = emotions[row["emotion"]]
+        profiles[speaker].update_emotion(emotion)
+
+        
+
+
 
 def save_profiles(profiles: list[profile], output_path: str):
     df = pd.DataFrame([p.to_dict() for p in profiles])
@@ -36,3 +41,10 @@ def save_profiles(profiles: list[profile], output_path: str):
     df.to_csv(output_path, index=False)
     print(f"Saved {output_path}")
 
+if __name__ == "__main__":
+    emotion_folder = "../../resources/transcripts_results"
+    context_folder = "../../resources/transcripts_context"
+    output_folder = "../../resources/profiles"
+    os.makedirs(output_folder, exist_ok=True)
+
+    generate_profile(emotion_folder, context_folder, "100")
