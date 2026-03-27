@@ -11,14 +11,14 @@ from pydub import AudioSegment
 from tqdm import tqdm
 
 # Model switching - change which ones are commented out to test other models
-# from models.audio.dpngtm_model import predict_emotion
-from models.audio.firdhokk_model import predict_emotion
-# from models.audio.prithivMLmods_model import predict_emotion
-# from models.audio.emotionWav2vec_model import predict_emotion
+# from models.audio.dpngtm_model import predict_emotion; model_name = 'dpngtm'
+from models.audio.firdhokk_model import predict_emotion; model_name = 'firdhokk'
+# from models.audio.prithivMLmods_model import predict_emotion; model_name = 'prithivMLmods'
+# from models.audio.emotionWav2vec_model import predict_emotion; model_name = 'emotionWav2vec'
 
-
-episode_number = "episode100"
-transcripts_path = "../../transcripts/0_transcript.csv"
+number = '100'
+episode_number = f"episode{number}"
+transcripts_path = f"../../resources/transcripts/{number}_transcript.csv"
 audio_path = f"../../audio/{episode_number}.wav"
 results_dir = "../../results/audio"
 overlap_dir = "../../results/overlap"
@@ -27,7 +27,7 @@ audio = audio.set_frame_rate(16000).set_channels(1)
 
 os.makedirs(results_dir, exist_ok=True)
 os.makedirs(overlap_dir, exist_ok=True)
-results_path = os.path.join(results_dir, f"{episode_number}_results.csv")
+results_path = os.path.join(results_dir, f"{episode_number}_{model_name}_results.csv")
 overlap_path = os.path.join(overlap_dir, f"{episode_number}_overlap_results.csv")
 
 def hhmmss_to_ms(timestamp: str) -> int:
