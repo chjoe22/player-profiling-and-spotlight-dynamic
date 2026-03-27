@@ -66,7 +66,7 @@ def analyse_baseline_comparison(output_path: str, player_data):
 	    # Take first row as baseline
 		baseline = data_rows[0]
 
-		output_file = os.path.join(output_path, f"{player}_basline_comparison.csv")
+		output_file = os.path.join(output_path, f"{player}_baseline_comparison.csv")
 		with open(output_file, mode='w', newline='', encoding='utf-8') as f:
 			writer = csv.writer(f)
 	        
