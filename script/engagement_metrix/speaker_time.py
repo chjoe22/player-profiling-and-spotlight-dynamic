@@ -79,8 +79,6 @@ if __name__ == "__main__":
         for path in sorted(csv_files):
             print(f"Processing {path}...")
             time(path)
-            print(f"Finding combat {path}")
-            find_combat(path)
     csv_stats = glob.glob(f"{folder_stats}/*.csv")
 
 

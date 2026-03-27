@@ -14,12 +14,10 @@ def extract_number(text: str):
         return None
     text = str(text)
 
-    # Check for digit first
     digit_match = pd.Series([text]).str.extractall(r'\b(\d+)\b')
     if not digit_match.empty:
         return int(digit_match[0].tolist()[-1])
 
-    # Check for written-out numbers
     text_lower = text.lower()
     for word, num in WORD_TO_NUM.items():
         if re.search(rf'\b{word}\b', text_lower):
@@ -58,6 +56,7 @@ def find_skill(csv_path, window):
         for idx, row in matches.iterrows():
             roll_result = None
             roll_speaker = None
+            roll_time = None
 
             window_rows = df.iloc[idx + 1: idx + 1 + window]
             for _, w_row in window_rows.iterrows():
@@ -65,6 +64,7 @@ def find_skill(csv_path, window):
                 if result is not None:
                     roll_result = result
                     roll_speaker = w_row["speaker"]
+                    roll_time = w_row["start_time"]
                     break
 
             rows.append({
@@ -73,6 +73,7 @@ def find_skill(csv_path, window):
                 "time": row["start_time"],
                 "roll_result": roll_result,
                 "roll_speaker": roll_speaker,
+                "roll_time": roll_time,
             })
     return pd.DataFrame(rows)
 
