@@ -6,7 +6,7 @@ from insightface.app import FaceAnalysis
 app = FaceAnalysis(name='buffalo_l')
 app.prepare(ctx_id=0, det_size=(640, 640))
 
-photo_folder = "../cast_folder/"
+photo_folder = "../../resources/cast_folder/"
 gallery_data = {}
 
 for filename in os.listdir(photo_folder):

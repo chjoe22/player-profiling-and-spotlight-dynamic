@@ -80,9 +80,9 @@ def find_skill(csv_path, window):
 
 
 if __name__ == "__main__":
-    folder = "../../transcripts"
+    folder = "../../resources/transcripts"
     csv_files = glob.glob(f"{folder}/*.csv")
-    output_folder = "../../transcripts_context"
+    output_folder = "../../resources/transcripts_context"
     os.makedirs(output_folder, exist_ok=True)
 
     all_skills = []
