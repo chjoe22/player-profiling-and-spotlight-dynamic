@@ -68,8 +68,8 @@ def compare(csv_path):
 if __name__ == "__main__":
     import glob
 
-    folder = "../../transcripts"
-    folder_stats = "../../transcripts_stats"
+    folder = "../../resources/transcripts"
+    folder_stats = "../../resources/transcripts_stats"
 
     csv_files = glob.glob(f"{folder}/*.csv")
 
