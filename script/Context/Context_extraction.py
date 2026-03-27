@@ -36,9 +36,11 @@ def find_combat(csv_path):
     )
     start_matches = df[mask]
 
-    print(f"\n{csv_path} — {len(start_matches)} match(es)")
+    return start_matches
+
+    """print(f"\n{csv_path} — {len(start_matches)} match(es)")
     for _, row in start_matches.iterrows():
-        print(f"  [{row['start_time']}] {row['speaker']}: {row['text'][:120]}")
+        print(f"  [{row['start_time']}] {row['speaker']}: {row['text'][:120]}")"""
 
 
 def find_skill(csv_path, window):
@@ -87,13 +89,16 @@ if __name__ == "__main__":
 
     all_skills = []
     for csv_path in csv_files:
-        find_combat(csv_path)
 
         episode_name = os.path.basename(csv_path).replace(".csv", "")
         skill_df = find_skill(csv_path, 20)
+        combat_df = find_combat(csv_path)
 
-        output_path = os.path.join(output_folder, f"{episode_name}_context.csv")
+
+        output_path = os.path.join(output_folder, f"{episode_name}_skill.csv")
         skill_df.to_csv(output_path, index=False)
+        output_path = os.path.join(output_folder, f"{episode_name}_combat.csv")
+        combat_df.to_csv(output_path, index=False)
         print(f"Saved {output_path}")
 
 

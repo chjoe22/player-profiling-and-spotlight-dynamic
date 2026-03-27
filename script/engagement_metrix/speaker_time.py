@@ -58,13 +58,6 @@ def time(csv_path: str):
     return stats
 
 
-def compare(csv_path):
-    df1 = pd.read_csv(csv_path)
-    path2 = csv_path.replace(".csv", "_stats.csv")
-    df2 = pd.read_csv(csv_path)
-
-
-
 if __name__ == "__main__":
     import glob
 
@@ -81,8 +74,5 @@ if __name__ == "__main__":
             time(path)
     csv_stats = glob.glob(f"{folder_stats}/*.csv")
 
-
-    #for path in csv_stats:
-        #compare(path)
 
 
