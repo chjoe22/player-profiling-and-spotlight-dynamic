@@ -20,15 +20,15 @@ number = '100'
 episode_number = f"episode{number}"
 transcripts_path = f"../../resources/transcripts/{number}_transcript.csv"
 audio_path = f"../../audio/{episode_number}.wav"
-results_dir = "../../resources/results/audio"
-overlap_dir = "../../resources/results/overlap"
+results_dir = f"../../resources/results/audio/{model_name}"
+overlap_dir = f"../../resources/results/overlap/{model_name}"
 audio = AudioSegment.from_file(audio_path)
 audio = audio.set_frame_rate(16000).set_channels(1)
 
 os.makedirs(results_dir, exist_ok=True)
 os.makedirs(overlap_dir, exist_ok=True)
-results_path = os.path.join(results_dir, f"{episode_number}_{model_name}_results.csv")
-overlap_path = os.path.join(overlap_dir, f"{episode_number}_overlap_results.csv")
+results_path = os.path.join(results_dir, f"{number}_episode_results.csv")
+overlap_path = os.path.join(overlap_dir, f"{number}_episode_overlap_results.csv")
 
 def hhmmss_to_ms(timestamp: str) -> int:
     t = datetime.strptime(timestamp, "%H:%M:%S")

@@ -15,8 +15,8 @@ import datetime
 
 from insightface.app import FaceAnalysis
 from models.video.insightface_model import identify_face, identify_all_faces
-#from models.video.dima806_model import predict_video_emotion
-from models.video.BEiT_model import predict_video_emotion
+from models.video.dima806_model import predict_video_emotion; model_name = "dima806"
+#from models.video.BEiT_model import predict_video_emotion; model_name = "BEiT"
 
 # Warnings ignores to make sure that the process bar and area is free and is easily readable - unnecessary
 warnings.filterwarnings("ignore", category=FutureWarning)
@@ -29,15 +29,15 @@ app = FaceAnalysis(name='buffalo_l')
 app.prepare(ctx_id=0, det_size=(640, 640))
 
 # frames_root = "../frames/episode1/"
-episode_number = "episode100" # Change number to reflect the episode running
-video_segment_path = "../../segmented-video"
-results_dir = "../../resources/results/video"
+episode_number = "100" # Change number to reflect the episode running
+video_segment_path = f"../../segmented-video/episode{episode_number}"
+results_dir = f"../../resources/results/video/{model_name}"
 data = np.load("../helper/cast_embeddings.npz")
 gallery = {name: data[name] for name in data.files}
 
 os.makedirs(results_dir, exist_ok=True)
 
-results_path = os.path.join(results_dir, f"{episode_number}_results.csv")
+results_path = os.path.join(results_dir, f"{episode_number}_episode_results.csv")
 
 with open(results_path, "w", newline="", encoding="utf-8") as output:
     writer = csv.writer(output)

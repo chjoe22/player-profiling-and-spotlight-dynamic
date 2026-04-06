@@ -1,30 +1,23 @@
-import sys
-from pathlib import Path
-# To find the path in the root folder - too many .parent but they are necessary for it to work
-sys.path.append(str(Path(__file__).resolve().parent.parent.parent))
-
 import subprocess
 import os
+from pathlib import Path
 
-# Change to reflect the episode number
-episode_number = "episode100"
-
-def split_video(input_video, output_folder, segment_time=600):
+def split_video(input_video_path, output_base_folder, segment_time=600):
     """
-    Split a video into smaller clips.
-
-    input_video: path to video file
-    output_folder: folder where clips will be saved
-    segment_time: length of each clip in seconds
+    Splits a single video file into segments.
     """
+    episode_name = input_video_path.stem
 
-    os.makedirs(output_folder, exist_ok=True)
+    episode_output_dir = output_base_folder / episode_name
+    episode_output_dir.mkdir(parents=True, exist_ok=True)
 
-    output_pattern = os.path.join(output_folder, episode_number+"_%03d.mp4")
+    print(f"--- Processing: {episode_name} ---")
+
+    output_pattern = str(episode_output_dir / f"{episode_name}_%03d.mp4")
 
     command = [
         "ffmpeg",
-        "-i", input_video,
+        "-i", str(input_video_path),
         "-c", "copy",
         "-map", "0",
         "-segment_time", str(segment_time),
@@ -35,10 +28,21 @@ def split_video(input_video, output_folder, segment_time=600):
 
     subprocess.run(command)
 
+def process_all_episodes(input_dir, output_dir):
+    video_path = Path(input_dir)
+    output_path = Path(output_dir)
+
+    episodes = list(video_path.glob("episode*.mp4"))
+
+    if not episodes:
+        print(f"No episodes found in {video_path.absolute()}")
+        return
+
+    for ep_file in episodes:
+        split_video(ep_file, output_path)
 
 if __name__ == "__main__":
-    split_video(
-        input_video="../../video/episode100.mp4",
-        output_folder="../../segmented-video/",
-        segment_time=600  # 600 seconds = 10 minutes
-    )
+    INPUT_FOLDER = "../../video/"
+    OUTPUT_FOLDER = "../../segmented-video/"
+
+    process_all_episodes(INPUT_FOLDER, OUTPUT_FOLDER)
