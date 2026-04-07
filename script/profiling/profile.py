@@ -38,6 +38,8 @@ EMOTION_LIST = [
     "neutral",
 ]
 
+
+
 class profile():
     def __init__(self, name: str, episode: int):
         self.name = name
@@ -58,4 +60,4 @@ class profile():
         return sorted(self.scores.items(), key=lambda x: x[1], reverse=True)
 
     def to_dict(self):
-        return {"player": self.name, "episode": self.episode, **self.scores}
+        return {"player": self.name, "episode": self.episode, **self.scores, **self.emotions}
