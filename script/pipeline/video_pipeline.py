@@ -29,7 +29,7 @@ app = FaceAnalysis(name='buffalo_l')
 app.prepare(ctx_id=0, det_size=(640, 640))
 
 # frames_root = "../frames/episode1/"
-episode_number = "100" # Change number to reflect the episode running
+episode_number = "107" # Change number to reflect the episode running
 video_segment_path = f"../../segmented-video/episode{episode_number}"
 results_dir = f"../../resources/results/video/{model_name}"
 data = np.load("../helper/cast_embeddings.npz")
@@ -91,6 +91,9 @@ with open(results_path, "w", newline="", encoding="utf-8") as output:
 
                     writer.writerow([video_file, frame_idx, timestamp, name, emotion, scores])
 
+                # Added to include VRAM usage onto the process bar 
+                vram_mb = torch.cuda.memory_allocated() / 1024**2
+                inner_process_bar.set_postfix({"VRAM": f"{vram_mb:.0f}MB"})
                 if frame_idx % 500 == 0:
                     if torch.cuda.is_available():
                         torch.cuda.empty_cache()
