@@ -9,7 +9,7 @@ import numpy as np
 import csv
 import torch
 import gc
-from tqdm import tqdm # Library for process bar
+from tqdm import tqdm # Library for process-bar
 import warnings
 import datetime
 
