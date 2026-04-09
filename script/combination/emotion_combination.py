@@ -1,9 +1,10 @@
 import pandas as pd
+from pathlib import Path
 
 AUDIO_WEIGHT = 0.38
 VIDEO_WEIGHT = 0.55
 
-
+# Parser
 def parse_scores(s):
     s = str(s).strip().strip("{}")
     scores = {}
@@ -26,9 +27,26 @@ def parse_scores(s):
 
     return scores
 
+# Kigger på første csv fil først osv
+def get_first_csv(folder_path):
+    folder = Path(folder_path)
+    csv_files = sorted(folder.glob("*.csv"))
 
-audio = pd.read_csv("../../resources/results/audio/episode0_results.csv")
-video = pd.read_csv("../../resources/results/video/episode100_results.csv")
+    if not csv_files:
+        raise FileNotFoundError(f"No CSV files found in folder: {folder}")
+
+    return csv_files[0]
+
+# Kigger i audio/video folder, combiner weighted graf i compared_results.csv
+audio_folder = "../../resources/results/audio"
+video_folder = "../../resources/results/video"
+output_path = "../../resources/results/combined/compared_results.csv"
+
+audio_file = get_first_csv(audio_folder)
+video_file = get_first_csv(video_folder)
+
+audio = pd.read_csv(audio_file)
+video = pd.read_csv(video_file)
 
 audio["scores"] = audio["scores"].apply(parse_scores)
 video["scores"] = video["scores"].apply(parse_scores)
@@ -38,6 +56,7 @@ video["speaker"] = video["speaker"].astype(str).str.strip()
 
 results = []
 
+# Finder match i video for speaker i audio, laver en weighted udregning for emotion samlet
 for _, a in audio.iterrows():
     matches = video[video["speaker"] == a["speaker"]]
 
@@ -70,7 +89,10 @@ for _, a in audio.iterrows():
     })
 
 result_df = pd.DataFrame(results)
-result_df.to_csv("../../resources/results/combined/compared_results.csv", index=False)
+result_df.to_csv(output_path, index=False)
 
-print(result_df.head())
-print("Saved to ../../resources/results/combined/compared_results.csv")
+# Legally blind så for brug for dem her nogle gange
+# print(result_df.head())
+# print(f"Loaded audio from: {audio_file}")
+# print(f"Loaded video from: {video_file}")
+# print(f"Saved to {output_path}")
