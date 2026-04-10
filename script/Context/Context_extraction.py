@@ -119,21 +119,16 @@ if __name__ == "__main__":
     csv_files = glob.glob(f"{folder}/*.csv")
     output_folder_skills = "../../resources/transcripts_context/skills"
     os.makedirs(output_folder_skills, exist_ok=True)
-    output_folder_combat = "../../resources/transcripts_context/combat"
-    os.makedirs(output_folder_combat, exist_ok=True)
 
     all_skills = []
     for csv_path in csv_files:
 
         episode_name = os.path.basename(csv_path).replace(".csv", "")
         skill_df = find_skill(csv_path, 20)
-        combat_df = find_combat(csv_path)
 
 
         output_path = os.path.join(output_folder_skills, f"{episode_name}_skill.csv")
         skill_df.to_csv(output_path, index=False)
-        output_path = os.path.join(output_folder_combat, f"{episode_name}_combat.csv")
-        combat_df.to_csv(output_path, index=False)
         print(f"Saved {output_path}")
 
 

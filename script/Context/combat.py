@@ -25,10 +25,16 @@ def find_combat(csv_path):
     combats = pd.concat([starts, ends], axis=1)
     return combats
 
+
+
 if __name__ == "__main__":
     folder = "../../resources/transcripts"
     csv_files = glob.glob(f"{folder}/*.csv")
     output_folder_combat = "../../resources/transcripts_context/combat"
     os.makedirs(output_folder_combat, exist_ok=True)
 
-
+    for csv_path in csv_files:
+        episode_name = os.path.basename(csv_path).replace(".csv", "")
+        combat_df = find_combat(csv_path)
+        output_path = os.path.join(output_folder_combat, f"{episode_name}_combat.csv")
+        combat_df.to_csv(output_path, index=False)
