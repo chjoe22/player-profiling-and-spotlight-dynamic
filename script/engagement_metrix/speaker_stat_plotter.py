@@ -69,7 +69,7 @@ def make_baseline_plot(folder_path: str):
             plt.gca().xaxis.set_major_locator(MaxNLocator(integer=True))
 
             # Save the plot in the same subfolder as the CSV
-            output_file = os.path.join(root, file_name.replace(".csv", ".png"))
+            output_file = os.path.join(root, file_name.replace(".csv", "_lineplot.png"))
             plt.savefig(output_file)
             plt.close()
 
@@ -188,12 +188,12 @@ def make_average_plot(folder_path: str):
             # Save the plot in the same subfolder as the CSV
             output_file = os.path.join(
                 root,
-                file_name.replace(".csv", "_percent_change_plot.png")
+                file_name.replace(".csv", "_lineplot.png")
             )
             plt.savefig(output_file)
             plt.close()
 
-    print("Percentage change plots with average baseline created successfully!")
+    print("Created average plots successfully!")
 
 
 if __name__ == "__main__":

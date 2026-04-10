@@ -108,7 +108,7 @@ def make_average_barplot(folder_path: str):
 
             output_file = os.path.join(
                 root,
-                file_name.replace(".csv", "_percent_change_bars.png")
+                file_name.replace(".csv", "_barplot.png")
             )
             plt.savefig(output_file)
             plt.close()
