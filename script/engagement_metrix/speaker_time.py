@@ -20,6 +20,8 @@ def time(csv_path: str):
     df["end_sec"] = df["end_time"].apply(parse_time)
     df["duration_sec"] = df["end_sec"] - df["start_sec"]
 
+    total_hours = df["end_sec"].max() / 3600
+
     rows = []
     for _, row in df.iterrows():
         speakers = [s.strip() for s in row["speaker"].split(",")]
@@ -34,18 +36,20 @@ def time(csv_path: str):
         expanded_df.groupby("speaker")
         .agg(
             turns=("duration_sec", "count"),
-            total_sec=("duration_sec", "sum"),
+            total_sec_spoken=("duration_sec", "sum"),
             avg_turn_duration=("duration_sec", "mean"),
         )
         .reset_index()
     )
 
-    stats = stats.sort_values("total_sec", ascending=False).reset_index(drop=True)
+    stats["total_sec_spoken_per_hour"] = stats["total_sec_spoken"] / total_hours
+    stats["turns_per_hour"] = stats["turns"] / total_hours
+    stats = stats.sort_values("total_sec_spoken_per_hour", ascending=False).reset_index(drop=True)
 
     for _, row in stats.iterrows():
         print(f"Speaker: {row['speaker']}")
         print(f"Turns: {int(row['turns'])}")
-        print(f"Total time: {int(row['total_sec'])}")
+        print(f"Total time: {int(row['total_sec_spoken'])}")
         print(f"Average time: {row['avg_turn_duration']:.2f}")
         print()
 

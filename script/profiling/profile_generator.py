@@ -60,8 +60,6 @@ def generate_profile(emotion_path: str, context_path: str, episode: int, source:
     print("Emotion start_time sample:", emotions["start_time"].head())
     print("context start_time sample:", context["start_time"].head())
 
-    merged = pd.merge(context, emotions, on=["speaker", "start_time"])
-
     profiles = {}
     for _, row in context.iterrows():
         speakers = [s.strip() for s in row["speaker"].split(",")]
