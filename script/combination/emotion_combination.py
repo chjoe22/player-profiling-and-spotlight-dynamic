@@ -1,5 +1,4 @@
 import os
-
 import pandas as pd
 from pathlib import Path
 
@@ -42,10 +41,15 @@ def get_first_csv(folder_path):
 # Kigger i audio/video folder, combiner weighted graf i compared_results.csv
 audio_folder = "../../resources/results/audio"
 video_folder = "../../resources/results/video"
-output_path = "../../resources/results/combined/compared_results.csv"
+
+
 
 audio_file = get_first_csv(audio_folder)
 video_file = get_first_csv(video_folder)
+
+#Navngivet ud fra audio, evt skift
+episode_name = audio_file.stem
+output_path = f"../../resources/results/combined/{episode_name}_weighted.csv"
 
 audio = pd.read_csv(audio_file)
 video = pd.read_csv(video_file)
