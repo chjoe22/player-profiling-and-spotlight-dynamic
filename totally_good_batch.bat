@@ -1,6 +1,8 @@
 @echo off
 setlocal enabledelayedexpansion
 
+pip install -r requirements.txt
+
 echo Starting Sequential Python Pipeline...
 
 echo Running speaker_time...

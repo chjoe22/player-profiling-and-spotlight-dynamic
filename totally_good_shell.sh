@@ -3,6 +3,8 @@
 # Stop the script if any command fails
 set -e
 
+pip install -r requirements.txt
+
 echo "Starting Sequential Python Pipeline..."
 
 echo "Running Speaker_time..."

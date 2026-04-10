@@ -4,6 +4,8 @@ set -e
 
 cd "$(dirname "$0")"
 
+pip install -r requirements.txt
+
 echo "Starting Pipeline on macOS..."
 
 echo "Running Speaker Metrics..."
