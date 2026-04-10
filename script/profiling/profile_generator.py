@@ -128,13 +128,12 @@ if __name__ == "__main__":
     for episode in episodes:
         print(f"Processing {episode}...")
 
-
-
         profiles = generate_profile(
             emotion_path=emotion_files[episode],
             context_path=context_files[episode],
             episode=episode,
-            source="video",
+            #source="video",
         )
+
         output_path = os.path.join(output_folder, f"{episode}_profiles.csv")
         save_profiles(profiles=profiles, output_path=output_path)
