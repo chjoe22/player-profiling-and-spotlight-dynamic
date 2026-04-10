@@ -1,3 +1,5 @@
+import os
+
 import pandas as pd
 from pathlib import Path
 
@@ -89,6 +91,7 @@ for _, a in audio.iterrows():
     })
 
 result_df = pd.DataFrame(results)
+os.makedirs("../../resources/results/combined/", exist_ok=True)
 result_df.to_csv(output_path, index=False)
 
 # Legally blind så for brug for dem her nogle gange
