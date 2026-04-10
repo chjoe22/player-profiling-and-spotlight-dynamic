@@ -23,8 +23,6 @@ wheels/
 share/python-wheels/
 transcripts_stats/
 transcripts_context/
-profiles/
-combined/
 speaker_stats/
 *.egg-info/
 .installed.cfg
@@ -211,5 +209,9 @@ marimo/_static/
 marimo/_lsp/
 __marimo__/
 audio/*.wav
+audio/*.mp3
+segmented-audio/
+segmented-video/
+video/*.mp4
 
 .idea/

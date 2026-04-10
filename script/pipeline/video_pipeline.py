@@ -29,7 +29,7 @@ app = FaceAnalysis(name='buffalo_l')
 app.prepare(ctx_id=0, det_size=(640, 640))
 
 # frames_root = "../frames/episode1/"
-episode_number = "107" # Change number to reflect the episode running
+episode_number = "108" # Change number to reflect the episode running
 video_segment_path = f"../../segmented-video/episode{episode_number}"
 results_dir = f"../../resources/results/video/{model_name}"
 data = np.load("../helper/cast_embeddings.npz")
@@ -54,7 +54,7 @@ with open(results_path, "w", newline="", encoding="utf-8") as output:
         cap = cv2.VideoCapture(video_path)
         fps = cap.get(cv2.CAP_PROP_FPS)
 
-        if fps == 0: 
+        if fps == 0:
             fps = 30.0
 
         # Remove these two if sorted(video_files) is used
@@ -73,7 +73,7 @@ with open(results_path, "w", newline="", encoding="utf-8") as output:
                 break
             
             # Determines how many frames are to be before they are read - current is every 10 frames are read
-            if frame_idx % 10 == 0:
+            if frame_idx % 30 == 0:
 
                 sec_in_segment = frame_idx / fps
                 total_sec = segment_offset + sec_in_segment
