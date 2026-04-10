@@ -4,27 +4,27 @@ setlocal enabledelayedexpansion
 echo Starting Sequential Python Pipeline...
 
 echo Running speaker_time...
-pushd script/engagement_metrix
+cd script/engagement_metrix
 python speaker_time.py || goto :error
 python speaker_time_analyzer.py || goto :error
 python speaker_stat_plotter_seaborn.py || goto :error
-popd
+cd ../..
 
 echo Running context_extraction...
-pushd script/context
+cd script/context
 python context_extraction.py || goto :error
 python combat.py || goto :error
-popd
+cd ../..
 
 echo Running emotion_combination...
-pushd script/combination
+cd script/combination
 python emotion_combination.py || goto :error
-popd
+cd ../..
 
 echo Running profile_generator...
-pushd script/profiling
+cd script/profiling
 python profile_generator.py || goto :error
-popd
+cd ../..
 
 echo Successfully ran all scripts
 pause
