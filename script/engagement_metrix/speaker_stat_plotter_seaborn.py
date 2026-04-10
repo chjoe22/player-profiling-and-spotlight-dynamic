@@ -185,6 +185,7 @@ def make_baseline_barplot(folder_path: str):
             ax.set_title(f"{player_name} - % Change Over Episodes (vs Baseline)")
             ax.set_xlabel("Episode")
             ax.set_ylabel("% Change")
+            ax.xaxis.set_major_locator(MaxNLocator(integer=True))
 
             episodes = sorted(df["Episode"].unique())
             ax.set_xticks(range(len(episodes)))
@@ -192,9 +193,6 @@ def make_baseline_barplot(folder_path: str):
 
             for i in range(len(episodes) + 1):
                 ax.axvline(i - 0.5, color="gray", linestyle="--", linewidth=1, alpha=1)
-
-            # Force integer ticks
-            ax.xaxis.set_major_locator(MaxNLocator(integer=True))
 
             plt.tight_layout()
 
