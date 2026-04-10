@@ -23,7 +23,8 @@ wheels/
 share/python-wheels/
 transcripts_stats/
 transcripts_context/
-resources/
+profiles/
+combined/
 speaker_stats/
 *.egg-info/
 .installed.cfg
