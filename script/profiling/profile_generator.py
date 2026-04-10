@@ -104,7 +104,7 @@ def save_profiles(profiles: list[profile], output_path: str):
 
 if __name__ == "__main__":
     emotion_folder = "../../resources/results/video/dima806"
-    context_folder = "../../resources/transcripts_context"
+    context_folder = "../../resources/transcripts_context/skills"
     output_folder = "../../resources/profiles"
     os.makedirs(output_folder, exist_ok=True)
 
@@ -113,8 +113,8 @@ if __name__ == "__main__":
         for p in glob.glob(f"{emotion_folder}/*_episode_results.csv")
     }
     context_files = {
-        os.path.basename(p).replace("_transcript_context.csv", ""): p
-        for p in glob.glob(f"{context_folder}/*_transcript_context.csv")
+        os.path.basename(p).replace("_transcript_skill.csv", ""): p
+        for p in glob.glob(f"{context_folder}/*_transcript_skill.csv")
     }
 
     print("Emotion files:", emotion_files)
