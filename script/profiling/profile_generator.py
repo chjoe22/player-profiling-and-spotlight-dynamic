@@ -56,9 +56,9 @@ def generate_profile(emotion_path: str, context_path: str, episode: int, source:
     context = load_context(context_path)
 
     print("Emotion columns:", emotions.columns.tolist())
-    print("Context columns:", context.columns.tolist())
+    print("context columns:", context.columns.tolist())
     print("Emotion start_time sample:", emotions["start_time"].head())
-    print("Context start_time sample:", context["start_time"].head())
+    print("context start_time sample:", context["start_time"].head())
 
     merged = pd.merge(context, emotions, on=["speaker", "start_time"])
 
@@ -118,11 +118,11 @@ if __name__ == "__main__":
     }
 
     print("Emotion files:", emotion_files)
-    print("Context files:", context_files)
+    print("context files:", context_files)
     episodes = sorted(set(emotion_files) & set(context_files))
 
     print("Emotion files:", emotion_files)
-    print("Context files:", list(context_files.keys())[:5])
+    print("context files:", list(context_files.keys())[:5])
     print("Matching episodes:", episodes)
 
     for episode in episodes:
