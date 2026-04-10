@@ -64,6 +64,8 @@ if __name__ == "__main__":
     os.makedirs(output_folder, exist_ok=True)
 
     all_rows = []
+    combat_hours = {}  # store total combat duration per episode
+
     for transcript_path in sorted(glob.glob(f"{transcript_folder}/*.csv")):
         episode_name = os.path.basename(transcript_path).replace(".csv", "")
         combats = find_combat(transcript_path)
@@ -72,7 +74,14 @@ if __name__ == "__main__":
             print(f"{episode_name}: no complete combat pairs found, skipping")
             continue
 
-        print(f"{episode_name}: {len(combats)} combat(s) found")
+        # Calculate total combat time in hours for this episode
+        total_combat_sec = sum(
+            parse_time(row["combat_end"]) - parse_time(row["combat_start"])
+            for _, row in combats.iterrows()
+        )
+        combat_hours[episode_name] = total_combat_sec / 3600
+
+        print(f"{episode_name}: {len(combats)} combat(s) found, {total_combat_sec}s total combat")
         speaking_df = get_speaking_under_combat(transcript_path, combats)
         speaking_df["episode"] = episode_name
         all_rows.append(speaking_df)
@@ -86,10 +95,14 @@ if __name__ == "__main__":
             combined.groupby(["speaker", "episode"])
             .agg(
                 turns=("duration", "count"),
-                total_sec=("duration", "sum"),
+                total_sec_spoken=("duration", "sum"),
             )
             .reset_index()
         )
+
+        stats["combat_hours"] = stats["episode"].map(combat_hours)
+        stats["turns_per_hour"] = stats["turns"] / stats["combat_hours"]
+        stats["total_sec_spoken_spoken_per_hour"] = stats["total_sec_spoken"] / stats["combat_hours"]
 
         for speaker, speaker_df in stats.groupby("speaker"):
             output_path = os.path.join(output_folder, f"{speaker}.csv")
