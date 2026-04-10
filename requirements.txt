@@ -12,3 +12,4 @@ tqdm
 Pillow
 torchvision
 pandas
+seaborn
