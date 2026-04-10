@@ -58,22 +58,13 @@ def find_combat(csv_path):
     df = pd.read_csv(csv_path)
     df.columns = [c.strip().lower() for c in df.columns]
 
-    start_mask = (
+    mask = (
             df["text"].str.contains("roll", case=False, na=False) &
             df["text"].str.contains("initiative", case=False, na=False)
     )
-    end_mask = (
-        df["text"].str.contains("How do you want to do this", case=False, na=False) &
-        df["speaker"].str.contains("matt", case=False, na=False)
-    )
-    starts = df[start_mask][["start_time", "speaker", "text"]].reset_index(drop=True)
-    ends = df[end_mask][["start_time", "speaker", "text"]].reset_index(drop=True)
+    start_matches = df[mask]
 
-    starts = starts.rename(columns={"start_time": "combat_start", "speaker": "start_speaker", "text": "start_text"})
-    ends = ends.rename(columns={"start_time": "combat_end", "speaker": "end_speaker", "text": "end_text"})
-
-    combats = pd.concat([starts, ends], axis=1)
-    return combats
+    return start_matches
 
     """print(f"\n{csv_path} — {len(start_matches)} match(es)")
     for _, row in start_matches.iterrows():
