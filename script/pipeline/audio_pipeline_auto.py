@@ -12,8 +12,8 @@ from pydub import AudioSegment
 from tqdm import tqdm
 
 # Model switching - change which ones are commented out to test other models
-# from models.audio.dpngtm_model import predict_emotion; model_name = 'dpngtm'
-from models.audio.firdhokk_model import predict_emotion; model_name = 'firdhokk'
+from models.audio.dpngtm_model import predict_emotion; model_name = 'dpngtm'
+#from models.audio.firdhokk_model import predict_emotion; model_name = 'firdhokk'
 # from models.audio.prithivMLmods_model import predict_emotion; model_name = 'prithivMLmods'
 # from models.audio.emotionWav2vec_model import predict_emotion; model_name = 'emotionWav2vec'
 
