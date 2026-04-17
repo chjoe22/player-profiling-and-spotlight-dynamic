@@ -31,16 +31,9 @@ def get_emotion_at(emotions: pd.DataFrame, speaker: str, time: str) -> str | Non
 def load_emotions(csv_path: str) -> pd.DataFrame:
     df = pd.read_csv(csv_path)
     df.columns = [c.strip().lower() for c in df.columns]
-    df = df.rename(columns={"timestamp": "start_time"})
-    df["start_time"] = pd.to_datetime(df["start_time"]).dt.strftime("%H:%M:%S")
-    return df[["speaker", "start_time", "end_time", "emotion"]]
-
-def load_emotions_video(csv_path: str) -> pd.DataFrame:
-    df = pd.read_csv(csv_path, low_memory=False)
-    df.columns = [c.strip().lower() for c in df.columns]
-    df["speaker"] = df["speaker"].str.upper().str.strip()
-    df["start_time"] = pd.to_datetime(df["timestamp"], format="%H:%M:%S").dt.strftime("%H:%M:%S")
-    df["end_time"] = df["start_time"]
+    print("Combined columns:", df.columns.tolist())
+    df = df.rename(columns={"timestamp": "start_time", "final_emotion": "emotion"})
+    df["start_time"] = pd.to_datetime(df["start_time"], format="mixed").dt.strftime("%H:%M:%S")
     return df[["speaker", "start_time", "end_time", "emotion"]]
 
 def load_context(csv_path: str) -> pd.DataFrame:
@@ -48,11 +41,8 @@ def load_context(csv_path: str) -> pd.DataFrame:
     df.columns = [c.strip().lower() for c in df.columns]
     return df[["skill", "speaker", "start_time"]]
 
-def generate_profile(emotion_path: str, context_path: str, episode: int, source: str = "audio"):
-    if source == "video":
-        emotions = load_emotions_video(emotion_path)
-    else:
-        emotions = load_emotions(emotion_path)
+def generate_profile(emotion_path: str, context_path: str, episode: int):
+    emotions = load_emotions(emotion_path)
     context = load_context(context_path)
 
     print("Emotion columns:", emotions.columns.tolist())
@@ -101,14 +91,15 @@ def save_profiles(profiles: list[profile], output_path: str):
     print(f"Saved {output_path}")
 
 if __name__ == "__main__":
-    emotion_folder = "../../resources/results/video/dima806"
+    emotion_folder = "../../resources/results/combined"
     context_folder = "../../resources/transcripts_context/skills"
+    combat_folder = "../../resources/transcripts_context/combat"
     output_folder = "../../resources/profiles"
     os.makedirs(output_folder, exist_ok=True)
 
     emotion_files = {
-        os.path.basename(p).replace("_episode_results.csv", ""): p
-        for p in glob.glob(f"{emotion_folder}/*_episode_results.csv")
+        os.path.basename(p).replace("_weighted.csv", ""): p
+        for p in glob.glob(f"{emotion_folder}/*_weighted.csv")
     }
     context_files = {
         os.path.basename(p).replace("_transcript_skill.csv", ""): p
@@ -132,7 +123,6 @@ if __name__ == "__main__":
             emotion_path=emotion_files[episode],
             context_path=context_files[episode],
             episode=episode,
-            source="video",
         )
         output_path = os.path.join(output_folder, f"{episode}_profiles.csv")
         save_profiles(profiles=profiles, output_path=output_path)

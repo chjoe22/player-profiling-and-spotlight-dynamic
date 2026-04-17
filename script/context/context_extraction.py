@@ -9,32 +9,29 @@ WORD_TO_NUM = {
 }
 SCENARIOS = [
     "combat",
-    "stealth_infiltration",
-    "intrigue_social",
     "exploration",
-    "investigation_lore",
-    "medicine",
+    "social",
 ]
 
 SKILL_SCENARIOS = {
-    "athletics":       ["combat", "exploration"],
+    "athletics":       ["combat"],
     "acrobatics":      ["combat"],
-    "stealth":         ["stealth_infiltration"],
-    "sleight of hand": ["stealth_infiltration"],
-    "deception":       ["stealth_infiltration", "intrigue_social"],
-    "persuasion":      ["intrigue_social"],
-    "intimidation":    ["intrigue_social"],
-    "performance":     ["intrigue_social"],
-    "insight":         ["intrigue_social", "investigation_lore"],
+    "medicine":        ["combat"],
     "perception":      ["exploration"],
     "survival":        ["exploration"],
     "nature":          ["exploration"],
     "animal handling": ["exploration"],
-    "investigation":   ["investigation_lore"],
-    "history":         ["investigation_lore"],
-    "religion":        ["investigation_lore"],
-    "arcana":          ["investigation_lore"],
-    "medicine":        ["medicine"],
+    "stealth":         ["exploration"],
+    "sleight of hand": ["exploration"],
+    "investigation":   ["exploration"],
+    "arcana":          ["exploration"],
+    "history":         ["exploration"],
+    "religion":        ["exploration"],
+    "persuasion":      ["social"],
+    "deception":       ["social"],
+    "intimidation":    ["social"],
+    "performance":     ["social"],
+    "insight":         ["social"],
 }
 
 def extract_number(text: str):
