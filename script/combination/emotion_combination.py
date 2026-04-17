@@ -1,3 +1,4 @@
+import glob
 import os
 import pandas as pd
 from pathlib import Path
@@ -46,8 +47,8 @@ def get_first_number(filename):
 audio_folder = "../../resources/results/audio"
 video_folder = "../../resources/results/video"
 
-audio_files = get_csv_files(audio_folder)
-video_files = get_csv_files(video_folder)
+audio_files = glob.glob(f"{audio_folder}/*.csv")
+video_files = glob.glob(f"{video_folder}/*.csv")
 
 os.makedirs("../../resources/results/combined/", exist_ok=True)
 
