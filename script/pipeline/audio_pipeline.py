@@ -12,14 +12,16 @@ from tqdm import tqdm
 
 # Model switching - change which ones are commented out to test other models
 # from models.audio.dpngtm_model import predict_emotion; model_name = 'dpngtm'
-from models.audio.firdhokk_model import predict_emotion; model_name = 'firdhokk'
+#from models.audio.firdhokk_model import predict_emotion; model_name = 'firdhokk'
 # from models.audio.prithivMLmods_model import predict_emotion; model_name = 'prithivMLmods'
-# from models.audio.emotionWav2vec_model import predict_emotion; model_name = 'emotionWav2vec'
+from models.audio.emotionWav2vec_model import predict_emotion; model_name = 'emotionWav2vec'
+
+MAX_SEGMENT_DURATION_MS = 30000
 
 number = '100'
 episode_number = f"episode{number}"
 transcripts_path = f"../../resources/transcripts/{number}_transcript.csv"
-audio_path = f"../../audio/{episode_number}.wav"
+audio_path = f"../../segmented-audio/{episode_number}.wav"
 results_dir = f"../../resources/results/audio/{model_name}"
 overlap_dir = f"../../resources/results/overlap/{model_name}"
 audio = AudioSegment.from_file(audio_path)
@@ -64,6 +66,10 @@ with open(transcripts_path, encoding="utf-8") as file, \
             continue
 
         #print(speaker, f"{start_time} : {start_ms} | {end_time} : {end_ms}")
+
+        duration = end_ms - start_ms
+        if duration > MAX_SEGMENT_DURATION_MS:
+            end_ms = start_ms + MAX_SEGMENT_DURATION_MS
 
         audio_clip = audio[start_ms:end_ms]
         if len(audio_clip) == 0:

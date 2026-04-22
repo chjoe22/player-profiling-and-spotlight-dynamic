@@ -15,8 +15,8 @@ import re
 
 from insightface.app import FaceAnalysis
 from models.video.insightface_model import identify_face, identify_all_faces
-from models.video.dima806_model import predict_video_emotion; model_name = "dima806"
-#from models.video.BEiT_model import predict_video_emotion; model_name = "BEiT"
+#from models.video.dima806_model import predict_video_emotion; model_name = "dima806"
+from models.video.BEiT_model import predict_video_emotion; model_name = "BEiT"
 
 warnings.filterwarnings("ignore", category=FutureWarning)
 warnings.filterwarnings("ignore", category=UserWarning)

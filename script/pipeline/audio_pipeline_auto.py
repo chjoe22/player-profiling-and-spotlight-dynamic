@@ -12,14 +12,16 @@ from pydub import AudioSegment
 from tqdm import tqdm
 
 # Model switching - change which ones are commented out to test other models
-from models.audio.dpngtm_model import predict_emotion; model_name = 'dpngtm'
+#from models.audio.dpngtm_model import predict_emotion; model_name = 'dpngtm'
 #from models.audio.firdhokk_model import predict_emotion; model_name = 'firdhokk'
 # from models.audio.prithivMLmods_model import predict_emotion; model_name = 'prithivMLmods'
-# from models.audio.emotionWav2vec_model import predict_emotion; model_name = 'emotionWav2vec'
+from models.audio.emotionWav2vec_model import predict_emotion; model_name = 'emotionWav2vec'
 
 def hhmmss_to_ms(timestamp: str) -> int:
     t = datetime.strptime(timestamp, "%H:%M:%S")
     return (t.hour * 3600 + t.minute * 60 + t.second) * 1000
+
+MAX_SEGMENT_DURATION_MS = 30000
 
 audio_root = "../../segmented-audio/"
 audio_files = [f for f in os.listdir(audio_root) if f.endswith(".wav") and "episode" in f.lower()]
@@ -77,6 +79,10 @@ for audio_filename in audio_files:
             if start_ms < previous_time_ms:
                 overlap_writer.writerow([speaker, start_time, end_time, "overlap_with_previous"])
                 continue
+
+            duration = end_ms - start_ms
+            if duration > MAX_SEGMENT_DURATION_MS:
+                end_ms = start_ms + MAX_SEGMENT_DURATION_MS
 
             audio_clip = audio[start_ms:end_ms]
             if len(audio_clip) == 0:
