@@ -7,57 +7,57 @@ from typing import Dict, List, Tuple, Optional
 
 
 def get_player_names(path: str):
-	csv_file_path = os.path.join(path, "100_transcript_stats.csv") #Yes, the starting file is currently hardcoded
-	
-	# Read the first column into a list
-	first_column_values = []
+    csv_file_path = os.path.join(path, "100_transcript_stats.csv")
 
-	with open(csv_file_path, mode='r', newline='', encoding='utf-8') as file:
-		reader = csv.reader(file)
+    names = set()
 
-    	# Skip header if the CSV has one
-		header = next(reader)
-    
-		for row in reader:
-			if row:
-				first_column_values.append(row[0])
+    with open(csv_file_path, mode='r', newline='', encoding='utf-8') as file:
+        reader = csv.reader(file)
+        next(reader, None)  # skip header safely
 
-	return first_column_values
+        for row in reader:
+            if row:
+                names.add(row[0])
+
+    return list(names)
 
 
 
 def extract_data(path: str, player_names):
-	player_data = {name: [] for name in player_names}
+    player_data = {name: [] for name in player_names}
 
-	# List all CSV files
-	csv_files = [f for f in os.listdir(path) if f.endswith(".csv")]
+    csv_files = [f for f in os.listdir(path) if f.endswith(".csv")]
+    csv_files.sort(key=lambda x: int(re.match(r"^(\d+)", x).group(1)))
 
-	# Sort files numerically by the starting number
-	csv_files.sort(key=lambda x: int(re.match(r"^(\d+)", x).group(1)))
+    for file_name in csv_files:
+        file_path = os.path.join(path, file_name)
 
-	# Loop through each file in order
-	for file_name in csv_files:
-		file_path = os.path.join(path, file_name)
-		with open(file_path, mode='r', newline='', encoding='utf-8') as file:
-			reader = csv.reader(file)
-			header = next(reader)  # skip header if present
+        with open(file_path, mode='r', newline='', encoding='utf-8') as file:
+            reader = csv.reader(file)
+            header = next(reader)
 
-			for row in reader:
-				if not row:
-					continue  # skip empty rows
-				name_in_row = row[0]
-				if name_in_row in player_data:
-                
-                	# Extract the 3 datapoints from the row (convert to float)
-					try:
-						datapoints = [float(x) for x in row[1:4]]
-					except ValueError:
-						datapoints = [None, None, None]  # handle missing or invalid numbers
-					player_data[name_in_row].append(datapoints)
-	return player_data
+            for row in reader:
+                if not row:
+                    continue
+
+                name_in_row = row[0]
+
+                if name_in_row in player_data:
+                    datapoints = []
+
+                    # Extract ALL numeric columns (skip speaker column)
+                    for value in row[1:]:
+                        try:
+                            datapoints.append(float(value))
+                        except ValueError:
+                            datapoints.append(None)
+
+                    player_data[name_in_row].append(datapoints)
+
+    return player_data
 
 
-
+#DEPRECATED
 def analyse_baseline_comparison(output_path: str, player_data):
 	os.makedirs(output_path, exist_ok=True)  # create folder if it doesn't exist
 	
@@ -98,7 +98,7 @@ def analyse_baseline_comparison(output_path: str, player_data):
 	print("Player speaker frequency baseline analysis CSV files generated successfully!")
 
 
-
+#DEPRECATED!
 def analyse_rolling_change_comparison(output_path: str, player_data):
 	os.makedirs(output_path, exist_ok=True)  # create folder if it doesn't exist
 	
@@ -139,68 +139,78 @@ def analyse_rolling_change_comparison(output_path: str, player_data):
 				writer.writerow(new_row)
 				previous_row = row  # update previous_row for next iteration
 
-print("Player speaker frequency rolling change analysis CSV files generated successfully!")
+	print("Player speaker frequency rolling change analysis CSV files generated successfully!")
 
 
 
 def analyse_average_change_comparison(output_path: str, player_data):
-	os.makedirs(output_path, exist_ok=True)  # Create folder if it doesn't exist
+    os.makedirs(output_path, exist_ok=True)
 
-	for player, data_rows in player_data.items():
-		if not data_rows:
-			continue  # Skip players with no data
+    # Correct metric names (match your CSV exactly)
+    metric_names = [
+        "turns",
+        "total_sec_spoken",
+        "avg_turn_duration",
+        "total_sec_spoken_per_hour",
+        "turns_per_hour"
+    ]
 
-        # --- Calculate baseline averages ---
-		avg_turns = mean(row[0] for row in data_rows)
-		avg_total_sec = mean(row[1] for row in data_rows)
-		avg_avg_turn_duration = mean(row[2] for row in data_rows)
+    for player, data_rows in player_data.items():
+        if not data_rows:
+            continue
 
-		baseline = [avg_turns, avg_total_sec, avg_avg_turn_duration]
+        num_metrics = len(data_rows[0])
 
-		player_folder = os.path.join(output_path, player)
-		os.makedirs(player_folder, exist_ok=True)
+        # --- Calculate baseline averages (ignore None) ---
+        baseline = []
+        for i in range(num_metrics):
+            values = [row[i] for row in data_rows if row[i] is not None]
+            if values:
+                baseline.append(mean(values))
+            else:
+                baseline.append(0)
 
-		output_file = os.path.join(
-    		player_folder, f"{player}_average_comparison.csv"
-		)
+        player_folder = os.path.join(output_path, player)
+        os.makedirs(player_folder, exist_ok=True)
 
-		with open(output_file, mode='w', newline='', encoding='utf-8') as f:
-			writer = csv.writer(f)
+        output_file = os.path.join(
+            player_folder, f"{player}_average_comparison.csv"
+        )
 
-            # Write header
-			writer.writerow([
-                "turns", "turns_change_from_avg",
-                "total_sec", "total_sec_change_from_avg",
-                "avg_turn_duration", "avg_turn_duration_change_from_avg"
-			])
+        with open(output_file, mode='w', newline='', encoding='utf-8') as f:
+            writer = csv.writer(f)
 
-            # --- Compare each episode to the baseline ---
-			for row in data_rows:
-				new_row = []
-				for i in range(3):
-					value = row[i]
-					baseline_value = baseline[i]
+            # --- Header ---
+            header = []
+            for name in metric_names:
+                header.extend([name, f"{name}_change_from_avg"])
+            writer.writerow(header)
 
-                    # Calculate percentage change from the average baseline
-					change: Optional[float]
-					if baseline_value != 0:
-						change = ((value - baseline_value) / baseline_value) * 100
-					else:
-						change = None  # Avoid division by zero
+            # --- Compare each episode to baseline ---
+            for row in data_rows:
+                new_row = []
 
-					new_row.extend([value, change])
+                for i in range(num_metrics):
+                    value = row[i]
+                    baseline_value = baseline[i]
 
-				writer.writerow(new_row)
+                    if value is None or baseline_value == 0:
+                        change = None
+                    else:
+                        change = ((value - baseline_value) / baseline_value) * 100
 
-            # Optionally, append a row showing the baseline averages
-			writer.writerow([])
-			writer.writerow([
-                avg_turns, 0.0,
-                avg_total_sec, 0.0,
-                avg_avg_turn_duration, 0.0
-			])
+                    new_row.extend([value, change])
 
-	print("Player speaker frequency average baseline comparison CSV files generated successfully!")
+                writer.writerow(new_row)
+
+            # --- Baseline row ---
+            writer.writerow([])
+            baseline_row = []
+            for value in baseline:
+                baseline_row.extend([value, 0.0])
+            writer.writerow(baseline_row)
+
+    print("Player speaker frequency average baseline comparison CSV files generated successfully!")
 
 
 if __name__ == "__main__":
@@ -209,7 +219,7 @@ if __name__ == "__main__":
 	
 	player_names = get_player_names(speaker_stats_path)
 	player_data = extract_data(speaker_stats_path, player_names)
-	analyse_baseline_comparison(output_folder, player_data)
-	analyse_rolling_change_comparison(output_folder, player_data)
+	#analyse_baseline_comparison(output_folder, player_data) #DEPRECATED
+	#analyse_rolling_change_comparison(output_folder, player_data) #DEPRECATED
 	analyse_average_change_comparison(output_folder, player_data)
 

@@ -77,6 +77,3 @@ if __name__ == "__main__":
             print(f"Processing {path}...")
             time(path)
     csv_stats = glob.glob(f"{folder_stats}/*.csv")
-
-
-
