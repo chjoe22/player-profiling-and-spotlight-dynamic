@@ -54,10 +54,18 @@ os.makedirs("../../resources/results/combined/", exist_ok=True)
 
 print(len(audio_files))
 
+folder_count = False
+
 # Går igennem alle audio filer
 for audio_file in audio_files:
+
+
     audio_number = get_first_number(os.path.basename(audio_file).replace(".csv", ""))
     video_file = None
+    if folder_count:
+        break
+    elif audio_number == "120":
+        folder_count = True
 
     # Kigger efter video fil med samme første nummer
     for v_file in video_files:
@@ -81,35 +89,33 @@ for audio_file in audio_files:
     audio["scores"] = audio["scores"].apply(parse_scores)
     video["scores"] = video["scores"].apply(parse_scores)
 
-    audio["speaker"] = audio["speaker"].astype(str).str.strip()
-    video["speaker"] = video["speaker"].astype(str).str.strip()
+    # Normalize timestamps to HH:MM:SS
+    audio["start_time"] = pd.to_datetime(audio["start_time"], format="mixed").dt.strftime("%H:%M:%S")
+    video["timestamp"] = pd.to_datetime(video["timestamp"], format="mixed").dt.strftime("%H:%M:%S")
+    video["speaker"] = video["speaker"].str.upper().str.strip()
+
+    audio_keys = set(zip(audio["speaker"], audio["start_time"]))
 
     results = []
 
-    # Finder match i video for speaker i audio, laver en weighted udregning for emotion samlet
     for _, a in audio.iterrows():
-        matches = video[video["speaker"] == a["speaker"]]
+        v_match = video[
+            (video["speaker"] == a["speaker"]) &
+            (video["timestamp"] == a["start_time"])
+            ]
 
-        video_avg = {}
-        for row in matches["scores"]:
-            for emotion, score in row.items():
-                video_avg[emotion] = video_avg.get(emotion, 0) + score
-
-        if not matches.empty:
-            for emotion in video_avg:
-                video_avg[emotion] /= len(matches)
-
-        combined = {}
-        all_emotions = set(a["scores"]) | set(video_avg)
-
-        for emotion in all_emotions:
-            audio_score = a["scores"].get(emotion, 0)
-            video_score = video_avg.get(emotion, 0)
-            combined[emotion] = audio_score * AUDIO_WEIGHT + video_score * VIDEO_WEIGHT
+        if not v_match.empty:
+            video_scores = v_match.iloc[0]["scores"]
+            combined = {}
+            all_emotions = set(a["scores"]) | set(video_scores)
+            for emotion in all_emotions:
+                combined[emotion] = a["scores"].get(emotion, 0) * AUDIO_WEIGHT + video_scores.get(emotion,
+                                                                                                  0) * VIDEO_WEIGHT
+        else:
+            combined = a["scores"]
 
         combined = dict(sorted(combined.items(), key=lambda x: x[1], reverse=True))
         final_emotion = max(combined, key=combined.get) if combined else None
-
         results.append({
             "speaker": a["speaker"],
             "final_emotion": final_emotion,
@@ -118,7 +124,25 @@ for audio_file in audio_files:
             "combined_scores": str(combined)
         })
 
+
+    for _, v in video.iterrows():
+        if (v["speaker"], v["timestamp"]) not in audio_keys:
+            scores = v["scores"]
+            scores = dict(sorted(scores.items(), key=lambda x: x[1], reverse=True))
+            final_emotion = max(scores, key=scores.get) if scores else None
+            results.append({
+                "speaker": v["speaker"],
+                "final_emotion": final_emotion,
+                "start_time": v["timestamp"],
+                "end_time": v["timestamp"],
+                "combined_scores": str(scores)
+            })
+
+    print(f"Audio rows: {len(audio)}")
+    print(f"Video rows: {len(video)}")
+    print(f"Combined rows: {len(results)}")
     result_df = pd.DataFrame(results)
+    result_df.sort_values(["speaker", "start_time"]).reset_index(drop=True)
     result_df.to_csv(output_path, index=False)
 
 # Legally blind så for brug for dem her nogle gange
