@@ -117,9 +117,9 @@ if __name__ == "__main__":
     output_folder_skills = "../../resources/transcripts_context/skills"
     os.makedirs(output_folder_skills, exist_ok=True)
 
-    all_counts = []  # ← add this
+    all_counts = []
 
-    for csv_path in sorted(csv_files):  # ← add sorted
+    for csv_path in sorted(csv_files):
         episode_name = os.path.basename(csv_path).replace(".csv", "")
         skill_df, scenario_counts = find_skill(csv_path, 20)  # ← unpack both
 
@@ -127,9 +127,9 @@ if __name__ == "__main__":
         skill_df.to_csv(output_path, index=False)
         print(f"Saved {output_path}")
 
-        all_counts.append({"episode": episode_name, **{s: scenario_counts[s] for s in SCENARIOS}})  # ← add this
+        all_counts.append({"episode": episode_name, **{s: scenario_counts[s] for s in SCENARIOS}})
 
-    # After loop ← add this block
+
     pd.DataFrame(all_counts).to_csv(
         "../../resources/transcripts_context/scenario_counts/all_scenario_counts.csv", index=False
     )
