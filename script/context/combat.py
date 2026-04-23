@@ -65,6 +65,7 @@ if __name__ == "__main__":
 
     all_rows = []
     combat_hours = {}  # store total combat duration per episode
+    all_durations = []
 
     for transcript_path in sorted(glob.glob(f"{transcript_folder}/*.csv")):
         episode_name = os.path.basename(transcript_path).replace(".csv", "")
@@ -74,6 +75,20 @@ if __name__ == "__main__":
             print(f"{episode_name}: no complete combat pairs found, skipping")
             continue
 
+        for _, combat in combats.iterrows():
+            start_sec = parse_time(combat["combat_start"])
+            end_sec = parse_time(combat["combat_end"])
+            all_durations.append({
+                "episode": episode_name,
+                "combat_start": combat["combat_start"],
+                "combat_end": combat["combat_end"],
+                "duration_sec": end_sec - start_sec,
+            })
+        duration_folder = "../../resources/transcripts_context/combat_durations"
+        os.makedirs(duration_folder, exist_ok=True)
+        pd.DataFrame(all_durations).to_csv(os.path.join(duration_folder, "combat_durations.csv"), index=False)
+        print(f"Saved combat durations")
+
         # Calculate total combat time in hours for this episode
         total_combat_sec = sum(
             parse_time(row["combat_end"]) - parse_time(row["combat_start"])
@@ -82,9 +97,12 @@ if __name__ == "__main__":
         combat_hours[episode_name] = total_combat_sec / 3600
 
         print(f"{episode_name}: {len(combats)} combat(s) found, {total_combat_sec}s total combat")
+
         speaking_df = get_speaking_under_combat(transcript_path, combats)
         speaking_df["episode"] = episode_name
         all_rows.append(speaking_df)
+
+
 
     if not all_rows:
         print("No combat data found.")
@@ -103,6 +121,7 @@ if __name__ == "__main__":
         stats["combat_hours"] = stats["episode"].map(combat_hours)
         stats["turns_per_hour"] = stats["turns"] / stats["combat_hours"]
         stats["total_sec_spoken_spoken_per_hour"] = stats["total_sec_spoken"] / stats["combat_hours"]
+
 
         for speaker, speaker_df in stats.groupby("speaker"):
             output_path = os.path.join(output_folder, f"{speaker}.csv")
