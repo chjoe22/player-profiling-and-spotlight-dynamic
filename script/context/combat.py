@@ -84,7 +84,7 @@ if __name__ == "__main__":
                 "combat_end": combat["combat_end"],
                 "duration_sec": end_sec - start_sec,
             })
-        duration_folder = "../../resources/transcripts_context/combat_durations"
+        duration_folder = "../../resources/transcripts_context/combat_duration"
         os.makedirs(duration_folder, exist_ok=True)
         pd.DataFrame(all_durations).to_csv(os.path.join(duration_folder, "combat_durations.csv"), index=False)
         print(f"Saved combat durations")
