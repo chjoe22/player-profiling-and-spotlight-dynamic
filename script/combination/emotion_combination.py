@@ -29,7 +29,7 @@ def parse_scores(s):
 
     return scores
 
-# Kigger på csv filer i folder
+# Gets all the csv files
 def get_csv_files(folder_path):
     folder = Path(folder_path)
     csv_files = sorted(folder.glob("*.csv"))
@@ -39,11 +39,11 @@ def get_csv_files(folder_path):
 
     return csv_files
 
-# Henter nummer først i filnavn
+# Gets first number in files
 def get_first_number(filename):
     return filename.split("_")[0]
 
-# Kigger i audio/video folder, combiner weighted graf i ny csv fil
+# looks in audio/video folder, combines weighted graph in new csv file
 audio_folder = "../../resources/results/audio"
 video_folder = "../../resources/results/video"
 
@@ -56,7 +56,7 @@ print(len(audio_files))
 
 folder_count = False
 
-# Går igennem alle audio filer
+# Goes through all audio files
 for audio_file in audio_files:
 
 
@@ -67,19 +67,19 @@ for audio_file in audio_files:
     elif audio_number == "120":
         folder_count = True
 
-    # Kigger efter video fil med samme første nummer
+    # Looks for matching video file
     for v_file in video_files:
         video_number = get_first_number(os.path.basename(v_file).replace(".csv", ""))
         if audio_number == video_number:
             video_file = v_file
             break
 
-    # Hvis der ikke er match i video så skipper den
+    # skips if missing
     if video_file is None:
         print(f"Ingen matchende video fil til {audio_file}")
         continue
 
-    # Navngivet ud fra audio, evt skift
+    # naming
     episode_name = audio_number
     output_path = f"../../resources/results/combined/{episode_name}_weighted.csv"
 
