@@ -101,11 +101,18 @@ for audio_file in audio_files:
     for _, a in audio.iterrows():
         v_match = video[
             (video["speaker"] == a["speaker"]) &
-            (video["timestamp"] == a["start_time"])
+            (video["timestamp"] >= a["start_time"] & video["timestamp"] <= a["end_time"])
             ]
 
         if not v_match.empty:
-            video_scores = v_match.iloc[0]["scores"]
+            video_avg = {}
+            for _, v_row in v_match.iterrows():
+                for emotion, score in v_row["scores"].items():
+                    video_avg[emotion] = video_avg.get(emotion, 0) + score
+            for emotion in video_avg:
+                video_avg[emotion] /= len(v_match)
+            video_scores = video_avg
+            
             combined = {}
             all_emotions = set(a["scores"]) | set(video_scores)
             for emotion in all_emotions:
