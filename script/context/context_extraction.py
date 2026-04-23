@@ -121,7 +121,7 @@ if __name__ == "__main__":
 
     for csv_path in sorted(csv_files):
         episode_name = os.path.basename(csv_path).replace(".csv", "")
-        skill_df, scenario_counts = find_skill(csv_path, 20)  # ← unpack both
+        skill_df, scenario_counts = find_skill(csv_path, 20)
 
         output_path = os.path.join(output_folder_skills, f"{episode_name}_skill.csv")
         skill_df.to_csv(output_path, index=False)

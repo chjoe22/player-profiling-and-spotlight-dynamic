@@ -150,6 +150,10 @@ for audio_file in audio_files:
     print(f"Video rows: {len(video)}")
     print(f"Combined rows: {len(results)}")
     result_df = pd.DataFrame(results)
+    print(f"Audio rows: {len(audio)}")
+    print(f"Video rows: {len(video)}")
+    print(f"Combined rows: {len(results)}")
+    print("Sample combined:", result_df[result_df["speaker"] != audio["speaker"].iloc[0]].head())
     result_df.sort_values(["speaker", "start_time"]).reset_index(drop=True)
     result_df.to_csv(output_path, index=False)
 
