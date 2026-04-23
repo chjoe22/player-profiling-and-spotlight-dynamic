@@ -120,7 +120,7 @@ if __name__ == "__main__":
 
         stats["combat_hours"] = stats["episode"].map(combat_hours)
         stats["turns_per_hour"] = stats["turns"] / stats["combat_hours"]
-        stats["total_sec_spoken_spoken_per_hour"] = stats["total_sec_spoken"] / stats["combat_hours"]
+        stats["total_sec_spoken_per_hour"] = stats["total_sec_spoken"] / stats["combat_hours"]
 
 
         for speaker, speaker_df in stats.groupby("speaker"):
