@@ -6,6 +6,15 @@ from pathlib import Path
 AUDIO_WEIGHT = 0.38
 VIDEO_WEIGHT = 0.55
 
+VIDEO_EMOTION_LABELS = ["Surprised", "Fearful", "Disgust", "Happy", "Sad", "Angry", "Neutral"]
+
+def parse_video_scores(s):
+    s = str(s).strip().strip("[]")
+    if not s:
+        return {}
+    values = [float(v.strip()) for v in s.split(",")]
+    return {VIDEO_EMOTION_LABELS[i]: values[i] for i in range(len(values))}
+
 # Parser
 def parse_scores(s):
     s = str(s).strip().strip("{}")
@@ -76,7 +85,7 @@ for audio_file in audio_files:
 
     # skips if missing
     if video_file is None:
-        print(f"Ingen matchende video fil til {audio_file}")
+        print(f"No matching video file to {audio_file}")
         continue
 
     # naming
@@ -87,7 +96,7 @@ for audio_file in audio_files:
     video = pd.read_csv(video_file)
 
     audio["scores"] = audio["scores"].apply(parse_scores)
-    video["scores"] = video["scores"].apply(parse_scores)
+    video["scores"] = video["scores"].apply(parse_video_scores)
 
     # Normalize timestamps to HH:MM:SS
     audio["start_time"] = pd.to_datetime(audio["start_time"], format="mixed").dt.strftime("%H:%M:%S")
@@ -95,56 +104,51 @@ for audio_file in audio_files:
     video["speaker"] = video["speaker"].str.upper().str.strip()
 
     audio_keys = set(zip(audio["speaker"], audio["start_time"]))
+    print("audio_keys sample:", list(audio_keys)[:5])
+    print("video timestamp sample:", video["timestamp"].head())
+    print("video speaker sample:", video["speaker"].head())
+    print(f"Audio file: {audio_file}")
+    print(f"Video file: {video_file}")
 
     results = []
 
-    for _, a in audio.iterrows():
-        v_match = video[
-            (video["speaker"] == a["speaker"]) &
-            (video["timestamp"] >= a["start_time"]) &
-            (video["timestamp"] <= a["end_time"])
+    # Process every video row
+    for _, v in video.iterrows():
+        speaker = v["speaker"]
+        timestamp = v["timestamp"]
+        video_scores = v["scores"]
+
+        # Check if there is an audio segment covering this timestamp for this speaker
+        audio_match = audio[
+            (audio["speaker"] == speaker) &
+            (audio["start_time"] <= timestamp) &
+            (audio["end_time"] >= timestamp)
             ]
 
-        if not v_match.empty:
-            video_avg = {}
-            for _, v_row in v_match.iterrows():
-                for emotion, score in v_row["scores"].items():
-                    video_avg[emotion] = video_avg.get(emotion, 0) + score
-            for emotion in video_avg:
-                video_avg[emotion] /= len(v_match)
-            video_scores = video_avg
-            
+        if not audio_match.empty:
+            a = audio_match.iloc[0]
+            audio_scores = a["scores"]
             combined = {}
-            all_emotions = set(a["scores"]) | set(video_scores)
+            all_emotions = set(audio_scores) | set(video_scores)
             for emotion in all_emotions:
-                combined[emotion] = a["scores"].get(emotion, 0) * AUDIO_WEIGHT + video_scores.get(emotion,
-                                                                                                  0) * VIDEO_WEIGHT
+                combined[emotion] = audio_scores.get(emotion, 0) * AUDIO_WEIGHT + video_scores.get(emotion,
+                                                                                                   0) * VIDEO_WEIGHT
+            start_time = a["start_time"]
+            end_time = a["end_time"]
         else:
-            combined = a["scores"]
+            combined = video_scores
+            start_time = timestamp
+            end_time = timestamp
 
         combined = dict(sorted(combined.items(), key=lambda x: x[1], reverse=True))
         final_emotion = max(combined, key=combined.get) if combined else None
         results.append({
-            "speaker": a["speaker"],
+            "speaker": speaker,
             "final_emotion": final_emotion,
-            "start_time": a["start_time"],
-            "end_time": a["end_time"],
+            "start_time": start_time,
+            "end_time": end_time,
             "combined_scores": str(combined)
         })
-
-
-    for _, v in video.iterrows():
-        if (v["speaker"], v["timestamp"]) not in audio_keys:
-            scores = v["scores"]
-            scores = dict(sorted(scores.items(), key=lambda x: x[1], reverse=True))
-            final_emotion = max(scores, key=scores.get) if scores else None
-            results.append({
-                "speaker": v["speaker"],
-                "final_emotion": final_emotion,
-                "start_time": v["timestamp"],
-                "end_time": v["timestamp"],
-                "combined_scores": str(scores)
-            })
 
     print(f"Audio rows: {len(audio)}")
     print(f"Video rows: {len(video)}")
