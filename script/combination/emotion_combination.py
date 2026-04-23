@@ -101,7 +101,8 @@ for audio_file in audio_files:
     for _, a in audio.iterrows():
         v_match = video[
             (video["speaker"] == a["speaker"]) &
-            (video["timestamp"] >= a["start_time"] & video["timestamp"] <= a["end_time"])
+            (video["timestamp"] >= a["start_time"]) &
+            (video["timestamp"] <= a["end_time"])
             ]
 
         if not v_match.empty:
