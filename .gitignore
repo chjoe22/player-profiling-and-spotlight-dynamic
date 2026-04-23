@@ -215,5 +215,5 @@ audio/*.mp3
 segmented-audio/
 segmented-video/
 video/*.mp4
-video/
+
 .idea/
