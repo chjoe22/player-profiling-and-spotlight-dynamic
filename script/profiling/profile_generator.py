@@ -2,9 +2,11 @@ import os
 import glob
 import pandas as pd
 from profile import profile
+from collections import defaultdict
 
 POSITIVE_EMOTIONS = {"happy", "surprised"}
 NEGATIVE_EMOTIONS = {"angry", "disgust", "fearful", "sad"}
+from collections import defaultdict
 
 EMOTION_MAP = {
     "fearful": "fear",
@@ -114,15 +116,21 @@ if __name__ == "__main__":
     print("context files:", list(context_files.keys())[:5])
     print("Matching episodes:", episodes)
 
+    all_profiles = defaultdict(list)
+
     for episode in episodes:
         print(f"Processing {episode}...")
-
-
-
         profiles = generate_profile(
             emotion_path=emotion_files[episode],
             context_path=context_files[episode],
             episode=episode,
         )
-        output_path = os.path.join(output_folder, f"{episode}_profiles.csv")
-        save_profiles(profiles=profiles, output_path=output_path)
+        for p in profiles:
+            all_profiles[p.name].append(p.to_dict())
+
+    os.makedirs(output_folder, exist_ok=True)
+    for player, dicts in all_profiles.items():
+        df = pd.DataFrame(dicts).sort_values("episode").reset_index(drop=True)
+        output_path = os.path.join(output_folder, f"{player}.csv")
+        df.to_csv(output_path, index=False)
+        print(f"Saved {output_path}")
