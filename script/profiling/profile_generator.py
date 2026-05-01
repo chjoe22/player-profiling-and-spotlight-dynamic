@@ -63,7 +63,6 @@ def generate_profile(emotion_path: str, context_path: str, episode: int):
             if speaker not in profiles:
                 profiles[speaker] = profile(name=speaker, episode=episode)
 
-            emotion = emotion.lower()
             if emotion in POSITIVE_EMOTIONS:
                 profiles[speaker].update_scenario(row["skill"], positive=True)
             elif emotion in NEGATIVE_EMOTIONS:
@@ -72,7 +71,7 @@ def generate_profile(emotion_path: str, context_path: str, episode: int):
     for _, row in emotions.iterrows():
         speakers = [s.strip() for s in row["speaker"].split(",")]
         for speaker in speakers:
-            emotion = EMOTION_MAP.get(row["emotion"].lower(), None)
+            emotion = EMOTION_MAP.get(row["emotion"], None)
             if emotion is None:
                 continue
             if speaker not in profiles:
