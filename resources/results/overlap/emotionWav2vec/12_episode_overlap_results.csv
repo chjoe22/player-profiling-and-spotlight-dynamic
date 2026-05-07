@@ -1,0 +1,17 @@
+speaker,start_time,end_time,reason
+TRAVIS,00:59:21,00:59:21,invalid_range
+LAURA,01:14:31,01:14:31,invalid_range
+ORION,01:30:41,01:30:41,invalid_range
+MATT,01:35:04,01:35:04,invalid_range
+SAM,01:47:24,01:47:24,invalid_range
+ASHLEY,01:53:26,01:53:26,invalid_range
+LAURA,01:53:26,01:53:26,invalid_range
+MATT,01:54:37,01:54:37,invalid_range
+SAM,01:59:47,01:59:47,invalid_range
+LAURA,02:01:08,02:01:08,invalid_range
+MATT,02:02:24,02:02:24,invalid_range
+LAURA,02:08:49,02:08:49,invalid_range
+TRAVIS,02:09:00,02:09:00,invalid_range
+ASHLEY,02:13:04,02:13:04,invalid_range
+TRAVIS,03:08:18,03:08:18,invalid_range
+MARISHA,03:27:29,,missing_end_time

@@ -1,0 +1,7 @@
+speaker,start_time,end_time,reason
+MATT,00:46:53,00:46:53,invalid_range
+MATT,01:05:16,01:05:16,invalid_range
+SAM,01:11:46,01:11:46,invalid_range
+SAM,03:00:56,03:00:56,invalid_range
+TALIESIN,03:29:40,03:29:40,invalid_range
+SAM,03:58:39,,missing_end_time

@@ -1,0 +1,4 @@
+speaker,start_time,end_time,reason
+LIAM,00:05:18,00:05:19,silence
+LAURA,00:05:19,00:05:21,silence
+LIAM,03:29:57,,missing_end_time

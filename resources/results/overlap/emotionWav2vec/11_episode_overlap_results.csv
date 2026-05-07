@@ -1,0 +1,11 @@
+speaker,start_time,end_time,reason
+ORION,00:18:34,00:18:34,invalid_range
+MARISHA,00:26:24,00:26:24,invalid_range
+IFY,00:33:08,00:33:08,invalid_range
+MATT,00:39:16,00:39:16,invalid_range
+ZAC,02:29:30,02:29:30,invalid_range
+ZAC,02:53:43,02:53:43,invalid_range
+IFY,02:53:49,02:53:49,invalid_range
+ZAC,03:02:50,03:02:50,invalid_range
+MATT,03:36:56,03:36:56,invalid_range
+ALL,03:36:56,,missing_end_time

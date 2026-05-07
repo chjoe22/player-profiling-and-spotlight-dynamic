@@ -1,0 +1,6 @@
+speaker,start_time,end_time,reason
+WIL,00:02:03,00:02:03,invalid_range
+ZAC,00:03:04,00:03:04,invalid_range
+MATT,00:28:51,00:28:51,invalid_range
+MARISHA,03:00:13,03:00:13,invalid_range
+MATT,04:05:32,,missing_end_time

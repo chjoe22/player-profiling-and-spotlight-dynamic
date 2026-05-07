@@ -1,0 +1,4 @@
+speaker,start_time,end_time,reason
+MATT,02:08:20,02:08:20,invalid_range
+MATT,02:27:29,02:27:29,invalid_range
+MATT,03:57:04,,missing_end_time
