@@ -15,8 +15,8 @@ import datetime
 
 from insightface.app import FaceAnalysis
 from models.video.insightface_model import identify_face, identify_all_faces
-from models.video.dima806_model import predict_video_emotion; model_name = "dima806"
-#from models.video.BEiT_model import predict_video_emotion; model_name = "BEiT"
+#from models.video.dima806_model import predict_video_emotion; model_name = "dima806"
+from models.video.BEiT_model import predict_video_emotion; model_name = "BEiT"
 
 # Warnings ignores to make sure that the process bar and area is free and is easily readable - unnecessary
 warnings.filterwarnings("ignore", category=FutureWarning)
@@ -29,7 +29,7 @@ app = FaceAnalysis(name='buffalo_l')
 app.prepare(ctx_id=0, det_size=(640, 640))
 
 # frames_root = "../frames/episode1/"
-episode_number = "108" # Change number to reflect the episode running
+episode_number = "120" # Change number to reflect the episode running
 video_segment_path = f"../../segmented-video/episode{episode_number}"
 results_dir = f"../../resources/results/video/{model_name}"
 data = np.load("../helper/cast_embeddings.npz")

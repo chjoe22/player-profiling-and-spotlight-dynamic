@@ -26,6 +26,7 @@ transcripts_context/
 speaker_stats/
 profiles/
 combined/
+emotion_output/
 *.egg-info/
 .installed.cfg
 *.egg

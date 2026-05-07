@@ -16,15 +16,15 @@ def split_video(input_video_path, output_base_folder, segment_time=600):
     output_pattern = str(episode_output_dir / f"{episode_name}_%03d.mp4")
 
     command = [
-        "ffmpeg",
-        "-i", str(input_video_path),
-        "-c", "copy",
-        "-map", "0",
-        "-segment_time", str(segment_time),
-        "-f", "segment",
-        "-reset_timestamps", "1",
-        output_pattern
-    ]
+    "ffmpeg",
+    "-i", str(input_video_path),
+    "-map", "0",
+    "-c", "copy",
+    "-f", "segment",
+    "-segment_time", str(segment_time),
+    "-reset_timestamps", "1",
+    output_pattern
+    ]   
 
     subprocess.run(command)
 
