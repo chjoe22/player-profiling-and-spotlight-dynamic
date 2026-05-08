@@ -28,6 +28,11 @@ cd script/profiling
 python profile_generator.py || goto :error
 cd ../..
 
+echo Running emotion_chart...
+cd script/helper
+python emotion_chart.py || goto :error
+cd ../..
+
 echo Successfully ran all scripts
 pause
 exit /b 0

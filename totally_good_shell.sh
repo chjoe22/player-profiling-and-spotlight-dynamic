@@ -30,4 +30,9 @@ cd script/profiling
 python3 profile_generator.py
 cd ../..
 
+echo "Running emotion_chart..."
+cd script/helper
+python3 emotion_chart.py
+cd ../..
+
 echo "Successfully ran all scripts"

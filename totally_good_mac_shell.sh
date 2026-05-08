@@ -31,4 +31,9 @@ pushd script/profiling > /dev/null
 python3 profile_generator.py
 popd > /dev/null
 
+echo "Running Emotion chart..."
+pushd script/helper > /dev/null
+python3 emotion_chart.py
+popd > /dev/null
+
 echo "Successfully ran all scripts"
