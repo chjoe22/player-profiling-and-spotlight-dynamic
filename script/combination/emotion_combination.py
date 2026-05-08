@@ -71,11 +71,7 @@ for audio_file in audio_files:
 
     audio_number = get_first_number(os.path.basename(audio_file).replace(".csv", ""))
     video_file = None
-    if folder_count:
-        break
-    elif audio_number == "120":
-        folder_count = True
-
+    
     # Looks for matching video file
     for v_file in video_files:
         video_number = get_first_number(os.path.basename(v_file).replace(".csv", ""))
