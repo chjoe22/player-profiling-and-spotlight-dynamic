@@ -50,6 +50,8 @@ def make_emotion_pie_charts(input_folder: str, output_folder: str):
                 person_data = df[df[person_col] == person][emotion_col].value_counts()
                 safe_name = "".join(x for x in str(person).lower() if x.isalnum())
 
+                person_data.to_csv(os.path.join(episode_output_dir, f"{safe_name}.csv"))
+
                 save_pie(person_data, f"Episode {episode_label} - {person}",
                          os.path.join(episode_output_dir, f"{safe_name}_emotions.png"))
 
