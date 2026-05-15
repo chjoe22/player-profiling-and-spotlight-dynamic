@@ -27,6 +27,7 @@ speaker_stats/
 profiles/
 combined/
 emotion_output/
+sentiment_analysis/
 *.egg-info/
 .installed.cfg
 *.egg
