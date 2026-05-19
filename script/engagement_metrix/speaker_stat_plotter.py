@@ -1,3 +1,9 @@
+#
+#
+# FILE IS FULLY DEPRECATED. USE SEABORN PLOTTER INSTEAD
+#
+#
+
 import csv
 import matplotlib.pyplot as plt
 import os

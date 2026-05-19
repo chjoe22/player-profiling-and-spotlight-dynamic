@@ -1,85 +1,86 @@
 import os
-
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 
 
-def create_barplots(parent_folder):
-    # Loop through all subfolders and files
-    for root, dirs, files in os.walk(parent_folder):
+AFFINITY_COLUMNS = [
+    "combat_affinity",
+    "exploration_affinity",
+    "social_affinity"
+]
+
+
+def create_affinity_barplots(parent_folder: str):
+    sns.set_theme(style="whitegrid")
+
+    for root, _, files in os.walk(parent_folder):
         for file in files:
 
-            # Only process CSV files ending with "profile.csv"
-            if file.lower().endswith("profile.csv"):
+            if not file.endswith("_context_affinity.csv"):
+                continue
 
-                csv_path = os.path.join(root, file)
+            csv_path = os.path.join(root, file)
 
-                try:
-                    # Read CSV
-                    df = pd.read_csv(csv_path)
+            try:
+                df = pd.read_csv(csv_path)
 
-                    # Use first row
-                    row = df.iloc[0]
+                # Remove empty / baseline rows safely
+                df = df[df["episode"].notna()]
+                df = df[df["episode"] != "AVERAGE"]
 
-                    # Convert data for plotting
-                    plot_df = pd.DataFrame({
-                        "Category": row.index,
-                        "Value": row.values
-                    })
+                if df.empty:
+                    continue
 
-                    # Create plot
-                    plt.figure(figsize=(4, 5))
+                # Compute averages directly (more reliable than last row)
+                values = [
+                    df["combat_affinity"].mean(),
+                    df["exploration_affinity"].mean(),
+                    df["social_affinity"].mean(),
+                ]
 
-                    ax = sns.barplot(
-                        data=plot_df,
-                        x="Category",
-                        y="Value"
-                    )
+                plot_df = pd.DataFrame({
+                    "Category": ["Combat", "Exploration", "Social"],
+                    "Value": values
+                })
 
-                    # Keep 0 centered
-                    max_abs = max(abs(plot_df["Value"].min()), abs(plot_df["Value"].max()))
-                    ax.set_ylim(-max_abs, max_abs)
+                plt.figure(figsize=(4, 5))
 
-                    # Draw zero line
-                    ax.axhline(0, color="black", linewidth=1)
+                ax = sns.barplot(
+                    data=plot_df,
+                    x="Category",
+                    y="Value"
+                )
 
-                    # Add value labels on bars
-                    for container in ax.containers:
-                        ax.bar_label(
-                            container,
-                            fmt="%.2f",   # Number format
-                            padding=3
-                        )
+                # Symmetric axis around 0
+                max_abs = max(abs(plot_df["Value"].min()), abs(plot_df["Value"].max()))
+                ax.set_ylim(-max_abs * 1.2, max_abs * 1.2)
 
-                    limit = max_abs * 1.25
-                    ax.set_ylim(-limit, limit)
+                ax.axhline(0, color="black", linewidth=1)
 
-                    # Plot title = filename without extension
-                    folder_name = os.path.basename(root)
-                    base_name = os.path.splitext(file)[0]
+                # Value labels
+                for container in ax.containers:
+                    ax.bar_label(container, fmt="%.2f", padding=3)
 
-                    plt.title(f"{folder_name} - {base_name}")
+                folder_name = os.path.basename(root)
+                base_name = os.path.splitext(file)[0]
 
-                    plt.tight_layout()
+                plt.title(f"{folder_name} - Context Affinity")
 
-                    # Save PNG in same folder
-                    folder_name = os.path.basename(root)
-                    base_name = os.path.splitext(file)[0]
-                    png_filename = f"{folder_name}_{base_name}.png"
-                    png_path = os.path.join(root, png_filename)
+                plt.tight_layout()
 
-                    plt.savefig(png_path)
-                    plt.close()
+                png_filename = f"{base_name}.png"
+                png_path = os.path.join(root, png_filename)
 
-                    print(f"Saved: {png_path}")
+                plt.savefig(png_path)
+                plt.close()
 
-                except Exception as e:
-                    print(f"Failed processing {csv_path}: {e}")
+                print(f"Saved: {png_path}")
+
+            except Exception as e:
+                print(f"Failed processing {csv_path}: {e}")
 
 
 if __name__ == "__main__":
-    # Replace with your parent folder path
     parent_folder = "../../resources/speaker_stats"
-
-    create_barplots(parent_folder)
+    create_affinity_barplots(parent_folder)

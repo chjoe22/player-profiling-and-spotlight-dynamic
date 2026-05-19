@@ -26,15 +26,16 @@ def get_player_names(path: str):
 def extract_data(path: str, player_names):
     player_data = {name: [] for name in player_names}
 
+    # Handle ALL csv files in folder
     csv_files = [f for f in os.listdir(path) if f.endswith(".csv")]
-    csv_files.sort(key=lambda x: int(re.match(r"^(\d+)", x).group(1)))
+    csv_files.sort()  # simple alphabetical ordering
 
     for file_name in csv_files:
         file_path = os.path.join(path, file_name)
 
         with open(file_path, mode='r', newline='', encoding='utf-8') as file:
             reader = csv.reader(file)
-            header = next(reader)
+            next(reader, None)  # skip header safely
 
             for row in reader:
                 if not row:
@@ -52,7 +53,11 @@ def extract_data(path: str, player_names):
                         except ValueError:
                             datapoints.append(None)
 
-                    player_data[name_in_row].append(datapoints)
+                    # Store episode/file name with datapoints
+                    player_data[name_in_row].append({
+                        "episode": os.path.splitext(file_name)[0],
+                        "data": datapoints
+                    })
 
     return player_data
 
@@ -146,7 +151,6 @@ def analyse_rolling_change_comparison(output_path: str, player_data):
 def analyse_average_change_comparison(output_path: str, player_data):
     os.makedirs(output_path, exist_ok=True)
 
-    # Correct metric names (match your CSV exactly)
     metric_names = [
         "turns",
         "total_sec_spoken",
@@ -155,40 +159,49 @@ def analyse_average_change_comparison(output_path: str, player_data):
         "turns_per_hour"
     ]
 
-    for player, data_rows in player_data.items():
-        if not data_rows:
+    for player, entries in player_data.items():
+        if not entries:
             continue
 
-        num_metrics = len(data_rows[0])
+        num_metrics = len(entries[0]["data"])
 
         # --- Calculate baseline averages (ignore None) ---
         baseline = []
+
         for i in range(num_metrics):
-            values = [row[i] for row in data_rows if row[i] is not None]
-            if values:
-                baseline.append(mean(values))
-            else:
-                baseline.append(0)
+            values = [
+                entry["data"][i]
+                for entry in entries
+                if entry["data"][i] is not None
+            ]
+
+            baseline.append(mean(values) if values else 0)
 
         player_folder = os.path.join(output_path, player)
         os.makedirs(player_folder, exist_ok=True)
 
         output_file = os.path.join(
-            player_folder, f"{player}_average_comparison.csv"
+            player_folder,
+            f"{player}_average_comparison.csv"
         )
 
         with open(output_file, mode='w', newline='', encoding='utf-8') as f:
             writer = csv.writer(f)
 
             # --- Header ---
-            header = []
+            header = ["episode"]
+
             for name in metric_names:
                 header.extend([name, f"{name}_change_from_avg"])
+
             writer.writerow(header)
 
-            # --- Compare each episode to baseline ---
-            for row in data_rows:
-                new_row = []
+            # --- Compare each episode to average baseline ---
+            for entry in entries:
+                episode = entry["episode"]
+                row = entry["data"]
+
+                new_row = [episode]
 
                 for i in range(num_metrics):
                     value = row[i]
@@ -205,9 +218,12 @@ def analyse_average_change_comparison(output_path: str, player_data):
 
             # --- Baseline row ---
             writer.writerow([])
-            baseline_row = []
+
+            baseline_row = ["AVERAGE_BASELINE"]
+
             for value in baseline:
                 baseline_row.extend([value, 0.0])
+
             writer.writerow(baseline_row)
 
     print("Player speaker frequency average baseline comparison CSV files generated successfully!")

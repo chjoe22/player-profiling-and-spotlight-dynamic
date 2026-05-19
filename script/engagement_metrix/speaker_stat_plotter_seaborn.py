@@ -64,8 +64,10 @@ def make_average_barplot(folder_path: str):
                         except (ValueError, TypeError):
                             data[name].append(np.nan)
 
+            episode_names = [row[0] for row in episode_rows]
+
             df = pd.DataFrame({
-                "Episode": list(range(1, len(episode_rows) + 1)),
+                "Episode": episode_names,
                 **data
             })
 
@@ -97,11 +99,12 @@ def make_average_barplot(folder_path: str):
             ax.set_xlabel("Episode")
             ax.set_ylabel("% Change from Average")
 
-            ax.xaxis.set_major_locator(MaxNLocator(integer=True))
+            #ax.xaxis.set_major_locator(MaxNLocator(integer=True))
 
-            episodes = sorted(df["Episode"].unique())
+            episodes = df["Episode"].tolist()
+
             ax.set_xticks(range(len(episodes)))
-            ax.set_xticklabels(episodes)
+            ax.set_xticklabels(episodes, rotation=45, ha="right")
 
             for i in range(len(episodes) + 1):
                 ax.axvline(i - 0.5, color="gray", linestyle="--", linewidth=1, alpha=1)
@@ -165,8 +168,10 @@ def make_average_barplot_per_hour(folder_path: str):
                         except (ValueError, TypeError):
                             data[name].append(np.nan)
 
+            episode_names = [row[0] for row in episode_rows]
+
             df = pd.DataFrame({
-                "Episode": list(range(1, len(episode_rows) + 1)),
+                "Episode": episode_names,
                 **data
             })
 
@@ -198,11 +203,12 @@ def make_average_barplot_per_hour(folder_path: str):
             ax.set_xlabel("Episode")
             ax.set_ylabel("% Change from Average")
 
-            ax.xaxis.set_major_locator(MaxNLocator(integer=True))
+            #ax.xaxis.set_major_locator(MaxNLocator(integer=True))
 
-            episodes = sorted(df["Episode"].unique())
+            episodes = df["Episode"].tolist()
+
             ax.set_xticks(range(len(episodes)))
-            ax.set_xticklabels(episodes)
+            ax.set_xticklabels(episodes, rotation=45, ha="right")
 
             for i in range(len(episodes) + 1):
                 ax.axvline(i - 0.5, color="gray", linestyle="--", linewidth=1, alpha=1)
