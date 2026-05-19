@@ -15,7 +15,7 @@ EMOTION_MAPPING = {
     "Other": "Neutral",
     "Unknown": "Neutral",
 }
-players = ["laura", "liam", "marisha", "sam", "taliesin", "travis"]
+players = ["LAURA", "LIAM", "MARISHA", "SAM", "TALIESIN", "TRAVIS"]
 
 def emotion_score(name: str):
     results = {}

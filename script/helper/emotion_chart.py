@@ -26,7 +26,7 @@ def make_emotion_pie_charts(input_folder: str, output_folder: str):
                 continue
 
             csv_path = os.path.join(root, file_name)
-            episode_label = file_name.split('_')[0].lower()
+            episode_label = file_name.split('_')[0]
             episode_output_dir = os.path.join(output_folder, f"episode_{episode_label}")
 
             if not os.path.exists(episode_output_dir):
