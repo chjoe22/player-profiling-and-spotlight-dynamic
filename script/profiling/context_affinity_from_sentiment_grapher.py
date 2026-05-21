@@ -67,7 +67,7 @@ def plot_sentiment_context_affinity(folder_path: str):
 
             player_name = file_name.replace("_sentiment_context_affinity.csv", "")
 
-            plt.title(f"{player_name} - Sentiment Context Affinity")
+            plt.title(f"{player_name} - Sentiment/Context Affinity")
 
             plt.tight_layout()
 

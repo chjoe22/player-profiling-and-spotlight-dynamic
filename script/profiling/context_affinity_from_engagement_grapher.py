@@ -65,7 +65,7 @@ def create_affinity_barplots(parent_folder: str):
                 folder_name = os.path.basename(root)
                 base_name = os.path.splitext(file)[0]
 
-                plt.title(f"{folder_name} - Context Affinity")
+                plt.title(f"{folder_name} - Engagement/Context Affinity")
 
                 plt.tight_layout()
 
