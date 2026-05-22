@@ -7,19 +7,9 @@ from typing import Dict, List, Tuple, Optional
 
 
 def get_player_names(path: str):
-    csv_file_path = os.path.join(path, "100_transcript_stats.csv")
+    players = ["LAURA", "LIAM", "MARISHA", "SAM", "TALIESIN", "TRAVIS", "ASHLEY"]
 
-    names = set()
-
-    with open(csv_file_path, mode='r', newline='', encoding='utf-8') as file:
-        reader = csv.reader(file)
-        next(reader, None)  # skip header safely
-
-        for row in reader:
-            if row:
-                names.add(row[0])
-
-    return list(names)
+    return list(players)
 
 
 
@@ -197,7 +187,12 @@ def analyse_average_change_comparison(output_path: str, player_data):
             writer.writerow(header)
 
             # --- Compare each episode to average baseline ---
-            for entry in entries:
+            sorted_entries = sorted(
+                entries,
+                key=lambda e: int(re.match(r"(\d+)", e["episode"]).group(1))
+                if re.match(r"(\d+)", e["episode"]) else float("inf")
+            )
+            for entry in sorted_entries:
                 episode = entry["episode"]
                 row = entry["data"]
 
